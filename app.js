@@ -12,6 +12,8 @@ const questions=[
 {q:"Quelle planète est surnommée la planète rouge ?",a:["Mars","Vénus","Jupiter","Mercure"],c:0}
 ];
 let games=JSON.parse(localStorage.games||"null")||defaultGames;
+if(!games.length) games=defaultGames;
+if(!games.some(g=>g.type==="number")) games.push({name:"Devine le nombre",icon:"🔢",points:50,type:"number"});
 let rewards=JSON.parse(localStorage.rewards||"null")||[
 {name:"Badge Champion",cost:500,icon:"🏅"},
 {name:"Carte cadeau",cost:2000,icon:"🎁"},
