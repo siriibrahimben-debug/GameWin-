@@ -18,10 +18,18 @@ let rewards=JSON.parse(localStorage.rewards||"null")||[
 {name:"Carte cadeau",cost:2000,icon:"🎁"},
 {name:"Accessoire gaming",cost:5000,icon:"🎧"}];
 let player=JSON.parse(localStorage.player||"null")||{name:"Visiteur",points:0};
-let qi=0;
+function save(){
+localStorage.games=JSON.stringify(games);
+localStorage.rewards=JSON.stringify(rewards);
+localStorage.player=JSON.stringify(player);
+render();
+}
 
-function save(){localStorage.games=JSON.stringify(games);localStorage.rewards=JSON.stringify(rewards);localStorage.player=JSON.stringify(player);render();} function render(){
-function showPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.getElementById(id).classList.add("active");}
+function showPage(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 
 function render(){
@@ -32,7 +40,13 @@ document.getElementById("statPoints").textContent=player.points;
 document.getElementById("aGames").textContent=games.length;
 document.getElementById("aPlayers").textContent="1";
 document.getElementById("aPoints").textContent=player.points;
+
 document.getElementById("gameGrid").innerHTML=games.map((g,i)=>`<div class="game"><div class="icon">${g.icon}</div><h3>${g.name}</h3><p class="muted">Joue et gagne jusqu'à ${g.points} points.</p>${g.type==="quiz"?`<button class="primary" onclick="startQuiz()">Jouer</button>`:g.type==="number"?`<button class="primary" onclick="startNumberGame()">Jouer</button>`:`<button class="primary" onclick="alert('Ce jeu sera ajouté dans une prochaine version.')">Jouer</button>`}</div>`).join("");
+
+document.getElementById("rewardGrid").innerHTML=rewards.map(r=>`<div class="reward"><div class="icon">${r.icon}</div><h3>${r.name}</h3><p>${r.cost} points</p><button class="primary" onclick="claim(${r.cost},'${r.name}')">Échanger</button></div>`).join("");
+
+document.getElementById("rankingBody").innerHTML=`<tr><td>1</td><td>${player.name}</td><td>${player.points.toLocaleString("fr-FR")}</td></tr>`;
+  }
 document.getElementById("rewardGrid").innerHTML=rewards.map(r=>`<div class="reward"><div class="icon">${r.icon}</div><h3>${r.name}</h3><p>${r.cost} points</p><button class="primary" onclick="claim(${r.cost},'${r.name}')">Échanger</button></div>`).join("");
 document.getElementById("rankingBody").innerHTML=`<tr><td>1</td><td>${player.name}</td><td>${player.points.toLocaleString("fr-FR")}</td></tr>`;
 }
