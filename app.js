@@ -11,9 +11,8 @@ const questions=[
 {q:"Combien font 7 × 8 ?",a:["54","56","64","48"],c:1},
 {q:"Quelle planète est surnommée la planète rouge ?",a:["Mars","Vénus","Jupiter","Mercure"],c:0}
 ];
-let games=JSON.parse(localStorage.games||"null")||defaultGames;
-if(!games.length) games=defaultGames;
-if(!games.some(g=>g.name==="Devine le nombre")){games.push({name:"Devine le nombre",icon:"🔢",points:50,type:"number"});save();}
+let games=defaultGames.slice();
+localStorage.games=JSON.stringify(games);
 let rewards=JSON.parse(localStorage.rewards||"null")||[
 {name:"Badge Champion",cost:500,icon:"🏅"},
 {name:"Carte cadeau",cost:2000,icon:"🎁"},
