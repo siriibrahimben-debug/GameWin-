@@ -1289,7 +1289,7 @@ function drawLudo3DBoard(){
      COULOIRS FINAUX
   ===================================================== */
 
-  Object.entries(LUDO_LANES())
+  Object.entries(LUDO_LANES)
     .forEach(([color,positions]) => {
 
       positions.forEach(pos => {
