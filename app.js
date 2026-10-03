@@ -4,7 +4,8 @@ const defaultGames=[
 {name:"Défi Rapide",icon:"⚡",points:60,type:"soon"},
 {name:"Tir de précision",icon:"🎯",points:50,type:"soon"},
 {name:"Échecs",icon:"♟️",points:70,type:"soon"},
-{name:"Tournoi",icon:"🏆",points:100,type:"soon"}];
+{name:"Tournoi",icon:"🏆",points:100,type:"soon"}]; {name:"Tournoi",icon:"🏆",points:100,type:"soon"},
+{name:"Devine le nombre",icon:"🔢",points:50,type:"number"}];
 const questions=[
 {q:"Quelle est la capitale du Burkina Faso ?",a:["Bobo-Dioulasso","Ouagadougou","Koudougou","Banfora"],c:1},
 {q:"Combien font 7 × 8 ?",a:["54","56","64","48"],c:1},
