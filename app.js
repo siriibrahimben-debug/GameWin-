@@ -7,7 +7,6 @@ const defaultGames=[
 {name:"Tournoi",icon:"🏆",points:100,type:"soon"},
 {name:"Devine le nombre",icon:"🔢",points:50,type:"number"}];
 const questions=[
-const questions=[
 {q:"Quelle est la capitale du Burkina Faso ?",a:["Bobo-Dioulasso","Ouagadougou","Koudougou","Banfora"],c:1},
 {q:"Combien font 7 × 8 ?",a:["54","56","64","48"],c:1},
 {q:"Quelle planète est surnommée la planète rouge ?",a:["Mars","Vénus","Jupiter","Mercure"],c:0}
