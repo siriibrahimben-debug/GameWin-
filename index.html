@@ -48,7 +48,16 @@
     <p id="quizResult"></p>
   </div>
 </section>
-
+<section id="numberGame" class="page">
+  <div class="quizbox">
+    <h2>🔢 Devine le nombre</h2>
+    <p>J'ai choisi un nombre entre 1 et 100.</p>
+    <input id="numberGuess" type="number" min="1" max="100" placeholder="Ton nombre">
+    <button class="primary" onclick="guessNumber()">Deviner</button>
+    <p id="numberResult"></p>
+    <button class="primary" onclick="showPage('games')">Retour aux jeux</button>
+  </div>
+</section>
 <section id="ranking" class="page">
   <h2>🏆 Classement</h2>
   <div class="panel"><table><thead><tr><th>#</th><th>Joueur</th><th>Points</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
