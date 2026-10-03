@@ -92,8 +92,14 @@ margin:1px;
 }
 
 .ludo-green{background:#18a558}
-.ludo-yellow{background:#e0a800;color:#111}
+
+.ludo-yellow{
+background:#e0a800;
+color:#111;
+}
+
 .ludo-red{background:#d83a4b}
+
 .ludo-blue{background:#2474d6}
 
 .ludo-homes{
@@ -157,7 +163,6 @@ grid-template-columns:1fr;
 
 
 <body>
-
 
 <header>
 
@@ -387,7 +392,6 @@ style="margin-top:18px">
 🔄 Nouvelle partie
 </button>
 
-
 <button
 class="primary"
 onclick="showPage('games')"
@@ -439,7 +443,6 @@ Retour aux jeux
 <h2>🎁 Récompenses</h2>
 
 <p class="muted">
-
 Les récompenses sont configurées par l'administrateur.
 Cette version utilise uniquement des points.
 
@@ -592,7 +595,9 @@ Continuer
 
 
 
-<script src="app.js?v=3"></script>
+<!-- IMPORTANT : nouvelle version pour éviter le cache -->
+
+<script src="app.js?v=4"></script>
 
 </body>
 
