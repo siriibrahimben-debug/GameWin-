@@ -13,7 +13,7 @@ const questions=[
 ];
 let games=JSON.parse(localStorage.games||"null")||defaultGames;
 if(!games.length) games=defaultGames;
-if(!games.some(g=>g.type==="number")){games.push({name:"Devine le nombre",icon:"🔢",points:50,type:"number"});save();}
+if(!games.some(g=>g.name==="Devine le nombre")){games.push({name:"Devine le nombre",icon:"🔢",points:50,type:"number"});save();}
 let rewards=JSON.parse(localStorage.rewards||"null")||[
 {name:"Badge Champion",cost:500,icon:"🏅"},
 {name:"Carte cadeau",cost:2000,icon:"🎁"},
