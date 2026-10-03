@@ -63,7 +63,7 @@ function guessNumber(){
     save();
   }else if(n<secretNumber){
     document.getElementById("numberResult").textContent="⬆️ Plus grand !";
-  }else{
+  }let secretNumber=0;else{
     document.getElementById("numberResult").textContent="⬇️ Plus petit !";
   }
 }
