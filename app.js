@@ -43,21 +43,9 @@ if(!Array.isArray(games) || games.length === 0){
 }
 
 let rewards = JSON.parse(localStorage.rewards || "null") || [
-  {
-    name:"Badge Champion",
-    cost:500,
-    icon:"🏅"
-  },
-  {
-    name:"Carte cadeau",
-    cost:2000,
-    icon:"🎁"
-  },
-  {
-    name:"Accessoire gaming",
-    cost:5000,
-    icon:"🎧"
-  }
+  {name:"Badge Champion",cost:500,icon:"🏅"},
+  {name:"Carte cadeau",cost:2000,icon:"🎁"},
+  {name:"Accessoire gaming",cost:5000,icon:"🎧"}
 ];
 
 let player = JSON.parse(localStorage.player || "null") || {
@@ -71,24 +59,13 @@ let rewardRequests =
 let qi = 0;
 let secretNumber = 0;
 
-
-/* =========================
-   SAUVEGARDE
-========================= */
-
 function save(){
   localStorage.games = JSON.stringify(games);
   localStorage.rewards = JSON.stringify(rewards);
   localStorage.player = JSON.stringify(player);
   localStorage.rewardRequests = JSON.stringify(rewardRequests);
-
   render();
 }
-
-
-/* =========================
-   NAVIGATION
-========================= */
 
 function showPage(id){
 
@@ -107,17 +84,11 @@ function showPage(id){
   }
 }
 
-
 document
   .querySelectorAll("nav button")
   .forEach(b => {
     b.onclick = () => showPage(b.dataset.page);
   });
-
-
-/* =========================
-   AFFICHAGE PRINCIPAL
-========================= */
 
 function render(){
 
@@ -132,7 +103,6 @@ function render(){
       `</button>`;
   }
 
-
   let statGames = document.getElementById("statGames");
   let statPlayers = document.getElementById("statPlayers");
   let statPoints = document.getElementById("statPoints");
@@ -146,7 +116,6 @@ function render(){
   if(statPoints)
     statPoints.textContent = player.points;
 
-
   let aGames = document.getElementById("aGames");
   let aPlayers = document.getElementById("aPlayers");
   let aPoints = document.getElementById("aPoints");
@@ -159,9 +128,6 @@ function render(){
 
   if(aPoints)
     aPoints.textContent = player.points;
-
-
-  /* JEUX */
 
   let gameGrid = document.getElementById("gameGrid");
 
@@ -224,9 +190,6 @@ function render(){
     `).join("");
   }
 
-
-  /* RÉCOMPENSES */
-
   let rewardGrid = document.getElementById("rewardGrid");
 
   if(rewardGrid){
@@ -260,9 +223,6 @@ function render(){
     `).join("");
   }
 
-
-  /* CLASSEMENT */
-
   let rankingBody =
     document.getElementById("rankingBody");
 
@@ -276,9 +236,6 @@ function render(){
       </tr>
     `;
   }
-
-
-  /* DEMANDES DE RÉCOMPENSE */
 
   let requestsBox =
     document.getElementById("rewardRequests");
@@ -322,7 +279,6 @@ function render(){
             `;
           }
 
-
           return `
 
             <div class="panel">
@@ -363,11 +319,6 @@ function render(){
   }
 }
 
-
-/* =========================
-   DEVINE LE NOMBRE
-========================= */
-
 function startNumberGame(){
 
   secretNumber =
@@ -380,7 +331,6 @@ function startNumberGame(){
 
   showPage("numberGame");
 }
-
 
 function guessNumber(){
 
@@ -395,7 +345,6 @@ function guessNumber(){
 
     return;
   }
-
 
   if(n === secretNumber){
 
@@ -420,11 +369,6 @@ function guessNumber(){
   }
 }
 
-
-/* =========================
-   CONNEXION / PSEUDO
-========================= */
-
 function openLogin(){
 
   document
@@ -432,14 +376,12 @@ function openLogin(){
     .classList.remove("hidden");
 }
 
-
 function closeLogin(){
 
   document
     .getElementById("loginModal")
     .classList.add("hidden");
 }
-
 
 function login(){
 
@@ -463,11 +405,6 @@ function login(){
   save();
 }
 
-
-/* =========================
-   QUIZ
-========================= */
-
 function startQuiz(){
 
   qi = 0;
@@ -476,7 +413,6 @@ function startQuiz(){
 
   nextQuestion();
 }
-
 
 function nextQuestion(){
 
@@ -501,7 +437,6 @@ function nextQuestion(){
     return;
   }
 
-
   let x = questions[qi];
 
   document.getElementById("quizMeta").textContent =
@@ -512,7 +447,6 @@ function nextQuestion(){
 
   document.getElementById("quizResult").textContent =
     "";
-
 
   document.getElementById("answers").innerHTML =
     x.a.map((a,i) => `
@@ -527,7 +461,6 @@ function nextQuestion(){
 
     `).join("");
 }
-
 
 function answer(i){
 
@@ -546,7 +479,6 @@ function answer(i){
       "Pas cette fois. Continue !";
   }
 
-
   qi++;
 
   setTimeout(() => {
@@ -558,11 +490,6 @@ function answer(i){
   },700);
 }
 
-
-/* =========================
-   RÉCOMPENSES
-========================= */
-
 function claim(cost,name){
 
   if(player.points < cost){
@@ -571,7 +498,6 @@ function claim(cost,name){
 
     return;
   }
-
 
   if(confirm(
     "Confirmer l'échange de " +
@@ -582,7 +508,6 @@ function claim(cost,name){
   )){
 
     player.points -= cost;
-
 
     rewardRequests.push({
 
@@ -598,16 +523,13 @@ function claim(cost,name){
 
     });
 
-
     save();
-
 
     alert(
       "Demande enregistrée. L'administrateur doit valider la récompense."
     );
   }
 }
-
 
 function approveReward(id){
 
@@ -624,7 +546,6 @@ function approveReward(id){
   alert("Récompense validée.");
 }
 
-
 function rejectReward(id){
 
   let request =
@@ -633,27 +554,19 @@ function rejectReward(id){
   if(!request)
     return;
 
-
   if(request.status === "pending"){
 
     player.points += request.cost;
   }
 
-
   request.status = "rejected";
 
   save();
-
 
   alert(
     "La demande a été refusée et les points ont été rendus au joueur."
   );
 }
-
-
-/* =========================
-   ADMIN : AJOUTER UN JEU
-========================= */
 
 function addGame(){
 
@@ -666,14 +579,12 @@ function addGame(){
   let p =
     +document.getElementById("newGamePoints").value;
 
-
   if(!n || !p){
 
     alert("Complète les champs.");
 
     return;
   }
-
 
   games.push({
 
@@ -687,18 +598,12 @@ function addGame(){
 
   });
 
-
   document.getElementById("newGameName").value = "";
 
   document.getElementById("newGamePoints").value = "";
 
   save();
 }
-
-
-/* =========================
-   ADMIN : AJOUTER RÉCOMPENSE
-========================= */
 
 function addReward(){
 
@@ -711,14 +616,12 @@ function addReward(){
   let c =
     +document.getElementById("newRewardCost").value;
 
-
   if(!n || !c){
 
     alert("Complète les champs.");
 
     return;
   }
-
 
   rewards.push({
 
@@ -730,32 +633,27 @@ function addReward(){
 
   });
 
-
   document.getElementById("newRewardName").value = "";
 
   document.getElementById("newRewardCost").value = "";
 
   save();
-}
-
-
-/* ==================================================
+  }/* ==================================================
    LUDO — NIVEAU MOYEN
 ================================================== */
+
+let ludoState = null;
 
 function ensureLudoPage(){
 
   if(document.getElementById("ludoGame"))
     return;
 
-
   const section =
     document.createElement("section");
 
   section.id = "ludoGame";
-
   section.className = "page";
-
 
   section.innerHTML = `
 
@@ -797,19 +695,17 @@ function ensureLudoPage(){
 
   `;
 
-
   document.body.appendChild(section);
 }
 
 
 /* =========================
-   NOUVELLE PARTIE LUDO
+   NOUVELLE PARTIE
 ========================= */
 
 function startLudo(){
 
   ensureLudoPage();
-
 
   ludoState = {
 
@@ -851,16 +747,10 @@ function startLudo(){
     winner:false
   };
 
-
   showPage("ludoGame");
 
   renderLudo();
 }
-
-
-/* État Ludo */
-
-let ludoState = null;
 
 
 /* =========================
@@ -872,18 +762,14 @@ function ludoRoll(){
   if(!ludoState || ludoState.winner)
     return;
 
-
   const p =
     ludoState.players[ludoState.turn];
-
 
   const dice =
     Math.floor(Math.random() * 6) + 1;
 
-
   document.getElementById("ludoInfo").textContent =
     `${p.color} ${p.name} a fait ${dice}.`;
-
 
   if(p.human){
 
@@ -912,15 +798,12 @@ function renderLudo(){
   if(!board || !ludoState)
     return;
 
-
   board.innerHTML = "";
-
 
   for(let i=0;i<25;i++){
 
     const cell =
       document.createElement("div");
-
 
     cell.style.cssText =
       "min-height:45px;" +
@@ -933,9 +816,7 @@ function renderLudo(){
       "font-size:18px;" +
       "text-align:center";
 
-
     const occupants = [];
-
 
     ludoState.players.forEach(p => {
 
@@ -953,28 +834,20 @@ function renderLudo(){
 
     });
 
-
     cell.textContent =
       occupants.join(" ") ||
       ((i + 1) % 5 === 0 ? "⭐" : "");
 
-
     board.appendChild(cell);
   }
-
 
   const pawns =
     document.getElementById("ludoPawns");
 
-
   if(!pawns)
     return;
 
-
   pawns.innerHTML = "";
-
-
-  /* PIONS DU JOUEUR */
 
   ludoState.players[0].pos.forEach(
     (pos,i) => {
@@ -982,9 +855,7 @@ function renderLudo(){
       const b =
         document.createElement("button");
 
-
       b.className = "answer";
-
 
       b.textContent =
         `🔴 Pion ${i + 1} — ` +
@@ -996,58 +867,41 @@ function renderLudo(){
           : "Case " + (pos + 1)
         );
 
-
       b.disabled = true;
-
 
       pawns.appendChild(b);
     }
   );
 
-
-  /* BOUTON DÉ */
-
   const roll =
     document.createElement("button");
-
 
   roll.className = "primary";
 
   roll.textContent =
     "🎲 Lancer le dé";
 
-
   roll.onclick = ludoRoll;
 
-
   if(ludoState.turn !== 0){
-
     roll.disabled = true;
   }
 
-
   pawns.appendChild(roll);
-
-
-  /* INFORMATIONS CPU */
 
   ludoState.players.forEach((p,i) => {
 
     if(i === 0)
       return;
 
-
     const info =
       document.createElement("p");
 
-
     info.className = "muted";
-
 
     info.textContent =
       `${p.color} ${p.name} : ` +
       `${p.score}/4 pions arrivés`;
-
 
     pawns.appendChild(info);
   });
@@ -1062,9 +916,344 @@ function renderLudoChoices(dice){
 
   renderLudo();
 
-
   const pawns =
     document.getElementById("ludoPawns");
 
+  ludoState.players[0].pos.forEach(
+    (pos,i) => {
 
-  l
+      const b =
+        pawns.children[i];
+
+      const canMove =
+        (pos < 0 && dice === 6) ||
+        (
+          pos >= 0 &&
+          pos < 24 &&
+          pos + dice <= 24
+        );
+
+      b.disabled = !canMove;
+
+      if(canMove){
+
+        b.onclick = () => {
+
+          moveLudoPawn(
+            0,
+            i,
+            dice
+          );
+
+        };
+      }
+    }
+  );
+
+  const extra =
+    document.createElement("button");
+
+  extra.className = "answer";
+
+  extra.textContent =
+    "Passer le tour";
+
+  extra.onclick = () => {
+
+    nextLudoTurn(dice === 6);
+
+  };
+
+  pawns.appendChild(extra);
+}
+
+
+/* =========================
+   DÉPLACEMENT
+========================= */
+
+function moveLudoPawn(
+  playerIndex,
+  pawnIndex,
+  dice
+){
+
+  const p =
+    ludoState.players[playerIndex];
+
+  let pos =
+    p.pos[pawnIndex];
+
+  if(pos < 0){
+
+    pos = 0;
+
+  }else{
+
+    pos += dice;
+
+  }
+
+  if(pos > 24){
+
+    nextLudoTurn(false);
+
+    return;
+  }
+
+  p.pos[pawnIndex] = pos;
+
+  if(pos === 24){
+
+    p.score++;
+  }
+
+  ludoCapture(
+    playerIndex,
+    pos
+  );
+
+  if(p.score >= 4){
+
+    ludoState.winner = true;
+
+    document.getElementById("ludoInfo").textContent =
+      `🏆 ${p.name} gagne ! +100 points`;
+
+    if(p.human){
+
+      player.points += 100;
+
+      save();
+    }
+
+    renderLudo();
+
+    return;
+  }
+
+  nextLudoTurn(dice === 6);
+}
+
+
+/* =========================
+   CAPTURE
+========================= */
+
+function ludoCapture(
+  playerIndex,
+  pos
+){
+
+  if(pos <= 0 || pos >= 24)
+    return;
+
+  ludoState.players.forEach(
+    (p,i) => {
+
+      if(i === playerIndex)
+        return;
+
+      p.pos =
+        p.pos.map(
+          x => x === pos ? -1 : x
+        );
+
+    }
+  );
+}
+
+
+/* =========================
+   TOUR SUIVANT
+========================= */
+
+function nextLudoTurn(extra){
+
+  if(extra){
+
+    ludoState.turn =
+      ludoState.turn;
+
+  }else{
+
+    ludoState.turn =
+      (ludoState.turn + 1) % 4;
+  }
+
+  renderLudo();
+
+  if(
+    ludoState.turn !== 0 &&
+    !ludoState.winner
+  ){
+
+    setTimeout(
+      ludoCpuTurn,
+      700
+    );
+
+  }else if(ludoState.turn === 0){
+
+    document.getElementById("ludoInfo").textContent =
+      "🔴 À toi de jouer ! Lance le dé.";
+  }
+}
+
+
+/* =========================
+   TOUR CPU
+========================= */
+
+function ludoCpuTurn(){
+
+  if(
+    !ludoState ||
+    ludoState.winner ||
+    ludoState.turn === 0
+  ){
+
+    return;
+  }
+
+  const dice =
+    Math.floor(Math.random() * 6) + 1;
+
+  const p =
+    ludoState.players[ludoState.turn];
+
+  document.getElementById("ludoInfo").textContent =
+    `${p.color} ${p.name} a fait ${dice}.`;
+
+  let choices =
+    p.pos
+      .map((pos,i) => {
+
+        if(
+          pos < 0 &&
+          dice === 6
+        ){
+
+          return i;
+        }
+
+        if(
+          pos >= 0 &&
+          pos < 24 &&
+          pos + dice <= 24
+        ){
+
+          return i;
+        }
+
+        return -1;
+
+      })
+      .filter(i => i >= 0);
+
+  if(choices.length){
+
+    choices.sort((a,b) => {
+
+      const pa = p.pos[a];
+      const pb = p.pos[b];
+
+      if(pb === 24 && pa !== 24)
+        return -1;
+
+      if(pa === 24 && pb !== 24)
+        return 1;
+
+      const va =
+        pa < 0 ? 0 : pa;
+
+      const vb =
+        pb < 0 ? 0 : pb;
+
+      return vb - va;
+    });
+
+    setTimeout(() => {
+
+      moveLudoPawn(
+        ludoState.turn,
+        choices[0],
+        dice
+      );
+
+    },600);
+
+  }else{
+
+    setTimeout(() => {
+
+      nextLudoTurn(dice === 6);
+
+    },600);
+  }
+}
+
+
+/* =========================
+   CPU DÉPLACEMENT
+========================= */
+
+function ludoCpuMove(dice){
+
+  if(
+    !ludoState ||
+    ludoState.winner
+  ){
+
+    return;
+  }
+
+  const p =
+    ludoState.players[ludoState.turn];
+
+  let choices =
+    p.pos
+      .map((pos,i) => {
+
+        if(
+          pos < 0 &&
+          dice === 6
+        ){
+
+          return i;
+        }
+
+        if(
+          pos >= 0 &&
+          pos < 24 &&
+          pos + dice <= 24
+        ){
+
+          return i;
+        }
+
+        return -1;
+
+      })
+      .filter(i => i >= 0);
+
+  if(choices.length){
+
+    moveLudoPawn(
+      ludoState.turn,
+      choices[0],
+      dice
+    );
+
+  }else{
+
+    nextLudoTurn(dice === 6);
+  }
+}
+
+
+/* =========================
+   DÉMARRAGE
+========================= */
+
+render();
