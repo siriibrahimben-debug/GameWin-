@@ -20,15 +20,18 @@ let rewards=JSON.parse(localStorage.rewards||"null")||[
 let player=JSON.parse(localStorage.player||"null")||{name:"Visiteur",points:0};
 let qi=0;
 
-function save(){localStorage.games=JSON.stringify(games);localStorage.rewards=JSON.stringify(rewards);localStorage.player=JSON.stringify(player);render();}
-function showPage(id){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");render();}
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
-function render(){
+function save(){localStorage.games=JSON.stringify(games);localStorage.rewards=JSON.stringify(rewards);localStorage.player=JSON.stringify(player);render();} function render(){
 document.getElementById("userArea").innerHTML=`<button class="primary" onclick="openLogin()">${player.name==="Visiteur"?"S'inscrire":"👤 "+player.name}</button>`;
-document.getElementById("gameGrid").innerHTML=games.map((g,i)=>`<div class="game"><div class="icon">${g.icon}</div><h3>${g.name}</h3><p class="muted">Joue et gagne jusqu'à ${g.points} points.</p>${g.type==="quiz"?`<button class="primary" onclick="startQuiz()">Jouer</button>`:g.type==="number"?`<button class="primary" onclick="startNumberGame()">Jouer</button>`:`<button class="primary" onclick="alert('Ce jeu sera ajouté dans une prochaine version.')">Jouer</button>`}
-document.getElementById("aGames").textContent=games.length;document.getElementById("aPlayers").textContent="1";document.getElementById("aPoints").textContent=player.points;
-document.getElementById("gameGrid").innerHTML=games.map((g,i)=>`<div class="game"><div class="icon">${g.icon}</div><h3>${g.name}</h3><p class="muted">Joue et gagne jusqu'à ${g.points} points.</p>${g.type==="quiz"?`<button class="primary" onclick="startQuiz()">Jouer</button>`:`<button class="primary" onclick="alert('Ce jeu sera ajouté dans une prochaine version.')">Jouer</button>`}</div>`).join("");
+document.getElementById("statGames").textContent=games.length;
+document.getElementById("statPlayers").textContent="1";
+document.getElementById("statPoints").textContent=player.points;
+document.getElementById("aGames").textContent=games.length;
+document.getElementById("aPlayers").textContent="1";
+document.getElementById("aPoints").textContent=player.points;
+document.getElementById("gameGrid").innerHTML=games.map((g,i)=>`<div class="game"><div class="icon">${g.icon}</div><h3>${g.name}</h3><p class="muted">Joue et gagne jusqu'à ${g.points} points.</p>${g.type==="quiz"?`<button class="primary" onclick="startQuiz()">Jouer</button>`:g.type==="number"?`<button class="primary" onclick="startNumberGame()">Jouer</button>`:`<button class="primary" onclick="alert('Ce jeu sera ajouté dans une prochaine version.')">Jouer</button>`}</div>`).join("");
 document.getElementById("rewardGrid").innerHTML=rewards.map(r=>`<div class="reward"><div class="icon">${r.icon}</div><h3>${r.name}</h3><p>${r.cost} points</p><button class="primary" onclick="claim(${r.cost},'${r.name.replaceAll("'","")}')">Échanger</button></div>`).join("");
+document.getElementById("rankingBody").innerHTML=`<tr><td>1</td><td>${player.name}</td><td>${player.points.toLocaleString("fr-FR")}</td></tr>`;
+}
 document.getElementById("rankingBody").innerHTML=`<tr><td>1</td><td>${player.name}</td><td>${player.points.toLocaleString("fr-FR")}</td></tr>`;
 }let secretNumber=0;
 
@@ -57,7 +60,7 @@ function guessNumber(){
   }else{
     document.getElementById("numberResult").textContent="⬇️ Plus petit !";
   }
-} comment
+}
 function openLogin(){document.getElementById("loginModal").classList.remove("hidden")}
 function closeLogin(){document.getElementById("loginModal").classList.add("hidden")}
 function login(){let n=document.getElementById("username").value.trim();if(!n)return alert("Entre un pseudo.");player.name=n;closeLogin();save()}
