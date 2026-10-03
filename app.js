@@ -27,36 +27,67 @@ const questions = [
   }
 ];
 
-let games = JSON.parse(localStorage.games || "null");
+let games =
+  JSON.parse(localStorage.games || "null");
 
 if(!Array.isArray(games) || games.length === 0){
+
   games = defaultGames.slice();
+
 }else{
+
   if(!games.some(g => g.name === "Ludo")){
+
     games.push({
       name:"Ludo",
       icon:"🎲",
       points:100,
       type:"ludo"
     });
+
   }
+
 }
+
 
 let rewards =
   JSON.parse(localStorage.rewards || "null") || [
-    {name:"Badge Champion",cost:500,icon:"🏅"},
-    {name:"Carte cadeau",cost:2000,icon:"🎁"},
-    {name:"Accessoire gaming",cost:5000,icon:"🎧"}
+
+    {
+      name:"Badge Champion",
+      cost:500,
+      icon:"🏅"
+    },
+
+    {
+      name:"Carte cadeau",
+      cost:2000,
+      icon:"🎁"
+    },
+
+    {
+      name:"Accessoire gaming",
+      cost:5000,
+      icon:"🎧"
+    }
+
   ];
+
 
 let player =
   JSON.parse(localStorage.player || "null") || {
+
     name:"Visiteur",
     points:0
+
   };
 
+
 let rewardRequests =
-  JSON.parse(localStorage.rewardRequests || "null") || [];
+  JSON.parse(
+    localStorage.rewardRequests || "null"
+  ) || [];
+
 
 let qi = 0;
 let secretNumber = 0;
@@ -93,19 +124,33 @@ function showPage(id){
 
   document
     .querySelectorAll(".page")
-    .forEach(p =>
-      p.classList.remove("active")
+    .forEach(
+      p => p.classList.remove("active")
     );
+
 
   const page =
     document.getElementById(id);
 
+
   if(page){
+
     page.classList.add("active");
+
   }
 
+
   if(id === "ludoGame"){
-    renderLudo();
+
+    if(
+      typeof ludoState !== "undefined" &&
+      ludoState
+    ){
+
+      renderLudo();
+
+    }
+
   }
 
 }
@@ -113,55 +158,72 @@ function showPage(id){
 
 document
   .querySelectorAll("nav button")
-  .forEach(b => {
+  .forEach(button => {
 
-    b.onclick = () =>
-      showPage(b.dataset.page);
+    button.onclick = () =>
+      showPage(button.dataset.page);
 
   });
 
 
 /* =========================
-   AFFICHAGE PRINCIPAL
+   AFFICHAGE
 ========================= */
 
 function render(){
 
   const userArea =
-    document.getElementById("userArea");
+    document.getElementById(
+      "userArea"
+    );
+
 
   if(userArea){
 
-    userArea.innerHTML =
-      `<button class="primary"
+    userArea.innerHTML = `
+
+      <button
+        class="primary"
         onclick="openLogin()">
+
         ${
           player.name === "Visiteur"
           ? "S'inscrire"
           : "👤 " + player.name
         }
-      </button>`;
+
+      </button>
+
+    `;
 
   }
 
 
   const statGames =
-    document.getElementById("statGames");
+    document.getElementById(
+      "statGames"
+    );
 
   const statPlayers =
-    document.getElementById("statPlayers");
+    document.getElementById(
+      "statPlayers"
+    );
 
   const statPoints =
-    document.getElementById("statPoints");
+    document.getElementById(
+      "statPoints"
+    );
 
 
   if(statGames)
     statGames.textContent =
       games.length;
 
+
   if(statPlayers)
     statPlayers.textContent =
       "1";
+
 
   if(statPoints)
     statPoints.textContent =
@@ -169,22 +231,30 @@ function render(){
 
 
   const aGames =
-    document.getElementById("aGames");
+    document.getElementById(
+      "aGames"
+    );
 
   const aPlayers =
-    document.getElementById("aPlayers");
+    document.getElementById(
+      "aPlayers"
+    );
 
   const aPoints =
-    document.getElementById("aPoints");
+    document.getElementById(
+      "aPoints"
+    );
 
 
   if(aGames)
     aGames.textContent =
       games.length;
 
+
   if(aPlayers)
     aPlayers.textContent =
       "1";
+
 
   if(aPoints)
     aPoints.textContent =
@@ -192,7 +262,10 @@ function render(){
 
 
   const gameGrid =
-    document.getElementById("gameGrid");
+    document.getElementById(
+      "gameGrid"
+    );
+
 
   if(gameGrid){
 
@@ -262,7 +335,10 @@ function render(){
 
 
   const rewardGrid =
-    document.getElementById("rewardGrid");
+    document.getElementById(
+      "rewardGrid"
+    );
+
 
   if(rewardGrid){
 
@@ -286,7 +362,9 @@ function render(){
           <button
             class="primary"
             onclick="claim(${r.cost},'${r.name}')">
+
             Échanger
+
           </button>
 
         </div>
@@ -297,7 +375,10 @@ function render(){
 
 
   const rankingBody =
-    document.getElementById("rankingBody");
+    document.getElementById(
+      "rankingBody"
+    );
+
 
   if(rankingBody){
 
@@ -323,7 +404,10 @@ function render(){
 
 
   const requestsBox =
-    document.getElementById("rewardRequests");
+    document.getElementById(
+      "rewardRequests"
+    );
+
 
   if(requestsBox){
 
@@ -348,18 +432,23 @@ function render(){
               <button
                 class="primary"
                 onclick="approveReward(${r.id})">
+
                 ✅ Valider
+
               </button>
 
               <button
                 class="primary"
                 onclick="rejectReward(${r.id})">
+
                 ❌ Refuser
+
               </button>
 
             `;
 
           }
+
 
           return `
 
@@ -380,6 +469,7 @@ function render(){
               <p>
                 Statut :
                 <strong>
+
                   ${
                     r.status === "pending"
                     ? "🟡 En attente"
@@ -387,6 +477,7 @@ function render(){
                     ? "✅ Validée"
                     : "❌ Refusée"
                   }
+
                 </strong>
               </p>
 
@@ -406,26 +497,27 @@ function render(){
 
 
 /* =========================
-   DEVINE LE NOMBRE
+   NOMBRE
 ========================= */
 
 function startNumberGame(){
 
   secretNumber =
-    Math.floor(Math.random() * 100) + 1;
+    Math.floor(
+      Math.random() * 100
+    ) + 1;
 
-  const input =
-    document.getElementById("numberGuess");
 
-  const result =
-    document.getElementById("numberResult");
+  document.getElementById(
+    "numberGuess"
+  ).value = "";
 
-  if(input)
-    input.value = "";
 
-  if(result)
-    result.textContent =
-      "Entre un nombre entre 1 et 100.";
+  document.getElementById(
+    "numberResult"
+  ).textContent =
+    "Entre un nombre entre 1 et 100.";
+
 
   showPage("numberGame");
 
@@ -434,13 +526,11 @@ function startNumberGame(){
 
 function guessNumber(){
 
-  const input =
-    document.getElementById("numberGuess");
+  const n =
+    +document.getElementById(
+      "numberGuess"
+    ).value;
 
-  const result =
-    document.getElementById("numberResult");
-
-  const n = +input.value;
 
   if(!n || n < 1 || n > 100){
 
@@ -457,7 +547,9 @@ function guessNumber(){
 
     player.points += 50;
 
-    result.textContent =
+    document.getElementById(
+      "numberResult"
+    ).textContent =
       "🎉 Bravo ! Tu as trouvé ! +50 points";
 
     secretNumber = 0;
@@ -466,12 +558,16 @@ function guessNumber(){
 
   }else if(n < secretNumber){
 
-    result.textContent =
+    document.getElementById(
+      "numberResult"
+    ).textContent =
       "⬆️ Plus grand !";
 
   }else{
 
-    result.textContent =
+    document.getElementById(
+      "numberResult"
+    ).textContent =
       "⬇️ Plus petit !";
 
   }
@@ -480,7 +576,7 @@ function guessNumber(){
 
 
 /* =========================
-   CONNEXION
+   PROFIL
 ========================= */
 
 function openLogin(){
@@ -509,6 +605,7 @@ function login(){
       .value
       .trim();
 
+
   if(!n){
 
     alert("Entre un pseudo.");
@@ -516,6 +613,7 @@ function login(){
     return;
 
   }
+
 
   player.name = n;
 
@@ -545,23 +643,30 @@ function nextQuestion(){
 
   if(qi >= questions.length){
 
-    document.getElementById("question")
-      .textContent =
+    document.getElementById(
+      "question"
+    ).textContent =
       "Quiz terminé 🎉";
 
-    document.getElementById("answers")
-      .innerHTML = `
 
-        <button
-          class="primary"
-          onclick="showPage('games')">
-          Retour aux jeux
-        </button>
+    document.getElementById(
+      "answers"
+    ).innerHTML = `
 
-      `;
+      <button
+        class="primary"
+        onclick="showPage('games')">
 
-    document.getElementById("quizResult")
-      .textContent =
+        Retour aux jeux
+
+      </button>
+
+    `;
+
+
+    document.getElementById(
+      "quizResult"
+    ).textContent =
       `Tu as maintenant ${player.points} points.`;
 
     return;
@@ -572,20 +677,29 @@ function nextQuestion(){
   const x =
     questions[qi];
 
-  document.getElementById("quizMeta")
-    .textContent =
+
+  document.getElementById(
+    "quizMeta"
+  ).textContent =
     `Question ${qi + 1}/${questions.length}`;
 
-  document.getElementById("question")
-    .textContent =
+
+  document.getElementById(
+    "question"
+  ).textContent =
     x.q;
 
-  document.getElementById("quizResult")
-    .textContent = "";
 
-  document.getElementById("answers")
-    .innerHTML =
-      x.a.map((a,i) => `
+  document.getElementById(
+    "quizResult"
+  ).textContent = "";
+
+
+  document.getElementById(
+    "answers"
+  ).innerHTML =
+    x.a.map(
+      (a,i) => `
 
         <button
           class="answer"
@@ -596,7 +710,8 @@ function nextQuestion(){
 
         </button>
 
-      `).join("");
+      `
+    ).join("");
 
 }
 
@@ -606,31 +721,39 @@ function answer(i){
   const x =
     questions[qi];
 
+
   if(i === x.c){
 
     player.points += 50;
 
-    document.getElementById("quizResult")
-      .textContent =
+    document.getElementById(
+      "quizResult"
+    ).textContent =
       "Bonne réponse ! +50 points 🎉";
 
   }else{
 
-    document.getElementById("quizResult")
-      .textContent =
+    document.getElementById(
+      "quizResult"
+    ).textContent =
       "Pas cette fois. Continue !";
 
   }
 
+
   qi++;
 
-  setTimeout(() => {
 
-    save();
+  setTimeout(
+    () => {
 
-    nextQuestion();
+      save();
 
-  },700);
+      nextQuestion();
+
+    },
+    700
+  );
 
 }
 
@@ -660,6 +783,7 @@ function claim(cost,name){
 
     player.points -= cost;
 
+
     rewardRequests.push({
 
       id:Date.now(),
@@ -674,7 +798,9 @@ function claim(cost,name){
 
     });
 
+
     save();
+
 
     alert(
       "Demande enregistrée. L'administrateur doit valider la récompense."
@@ -692,13 +818,17 @@ function approveReward(id){
       r => r.id === id
     );
 
+
   if(!request)
     return;
+
 
   request.status =
     "approved";
 
+
   save();
+
 
   alert(
     "Récompense validée."
@@ -713,6 +843,7 @@ function rejectReward(id){
     rewardRequests.find(
       r => r.id === id
     );
+
 
   if(!request)
     return;
@@ -729,7 +860,9 @@ function rejectReward(id){
   request.status =
     "rejected";
 
+
   save();
+
 
   alert(
     "La demande a été refusée et les points ont été rendus au joueur."
@@ -739,7 +872,7 @@ function rejectReward(id){
 
 
 /* =========================
-   ADMIN — JEUX
+   ADMIN
 ========================= */
 
 function addGame(){
@@ -750,10 +883,12 @@ function addGame(){
       .value
       .trim();
 
+
   const p =
     +document
       .getElementById("newGamePoints")
       .value;
+
 
   if(!n || !p){
 
@@ -781,18 +916,16 @@ function addGame(){
     "newGameName"
   ).value = "";
 
+
   document.getElementById(
     "newGamePoints"
   ).value = "";
+
 
   save();
 
 }
 
-
-/* =========================
-   ADMIN — RÉCOMPENSES
-========================= */
 
 function addReward(){
 
@@ -802,10 +935,12 @@ function addReward(){
       .value
       .trim();
 
+
   const c =
     +document
       .getElementById("newRewardCost")
       .value;
+
 
   if(!n || !c){
 
@@ -831,9 +966,11 @@ function addReward(){
     "newRewardName"
   ).value = "";
 
+
   document.getElementById(
     "newRewardCost"
   ).value = "";
+
 
   save();
 
@@ -841,51 +978,47 @@ function addReward(){
 
 
 /* ==================================================
-   LUDO CLASSIQUE
+   LUDO CLASSIQUE — MOTEUR
 ================================================== */
 
 let ludoState = null;
 
 
-const LUDO_PLAYERS = [
+const LUDO_COLORS = [
 
   {
-    name:"Toi",
-    color:"🟢",
-    css:"ludo-green",
-    start:0,
-    human:true
+    id:"green",
+    name:"Vert",
+    icon:"🟢",
+    css:"ludo-green"
   },
 
   {
-    name:"CPU Rouge",
-    color:"🔴",
-    css:"ludo-red",
-    start:13,
-    human:false
+    id:"red",
+    name:"Rouge",
+    icon:"🔴",
+    css:"ludo-red"
   },
 
   {
-    name:"CPU Jaune",
-    color:"🟡",
-    css:"ludo-yellow",
-    start:26,
-    human:false
+    id:"yellow",
+    name:"Jaune",
+    icon:"🟡",
+    css:"ludo-yellow"
   },
 
   {
-    name:"CPU Bleu",
-    color:"🔵",
-    css:"ludo-blue",
-    start:39,
-    human:false
+    id:"blue",
+    name:"Bleu",
+    icon:"🔵",
+    css:"ludo-blue"
   }
 
 ];
 
 
 /*
- * Parcours de 52 cases.
+ * Parcours extérieur.
  */
 
 const LUDO_PATH = [
@@ -907,11 +1040,30 @@ const LUDO_PATH = [
 
 
 /*
+ * Départs.
+ */
+
+const LUDO_START = [
+  0,
+  13,
+  26,
+  39
+];
+
+
+/*
  * Cases protégées.
  */
 
 const LUDO_SAFE = [
-  0,8,13,21,26,34,39,47
+  0,
+  8,
+  13,
+  21,
+  26,
+  34,
+  39,
+  47
 ];
 
 
@@ -919,7 +1071,7 @@ const LUDO_SAFE = [
  * Couloirs finaux.
  */
 
-const LUDO_HOME_LANES = [
+const LUDO_LANES = [
 
   [
     [7,1],
@@ -953,27 +1105,268 @@ const LUDO_HOME_LANES = [
     [9,7]
   ]
 
-];
-
-
-/* =========================
-   DÉMARRER LE LUDO
-========================= */
+];/* ==================================================
+   LUDO — ÉCRAN DE CONFIGURATION
+================================================== */
 
 function startLudo(){
 
-  ludoNewGame();
+  createLudoScreen();
 
   showPage("ludoGame");
 
-  renderLudo();
+  ludoShowSetup();
 
 }
 
 
-function ludoNewGame(){
+/* =========================
+   CRÉER L'ÉCRAN
+========================= */
+
+function createLudoScreen(){
+
+  let page =
+    document.getElementById(
+      "ludoGame"
+    );
+
+
+  if(!page){
+
+    page =
+      document.createElement(
+        "section"
+      );
+
+    page.id =
+      "ludoGame";
+
+    page.className =
+      "page";
+
+    document.querySelector("main")
+      .appendChild(page);
+
+  }
+
+
+  page.innerHTML = `
+
+    <div class="ludo-app">
+
+      <div class="ludo-top">
+
+        <button
+          class="ludo-back"
+          onclick="showPage('games')">
+
+          ↩
+
+        </button>
+
+        <div class="ludo-title">
+
+          🎲 LUDO CLASSIC
+
+        </div>
+
+        <div class="ludo-points">
+
+          🏆 ${player.points}
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="ludoContent">
+      </div>
+
+    </div>
+
+  `;
+
+
+  ludoInjectStyle();
+
+}
+
+
+/* =========================
+   CONFIGURATION
+========================= */
+
+function ludoShowSetup(){
+
+  const box =
+    document.getElementById(
+      "ludoContent"
+    );
+
+
+  box.innerHTML = `
+
+    <div class="ludo-setup">
+
+      <div class="ludo-setup-title">
+
+        CLASSIC MODE ❓
+
+      </div>
+
+
+      <div class="ludo-setup-panel">
+
+        <h1>
+          CHOOSE COLOR AND NAME
+        </h1>
+
+
+        <div class="ludo-player-preview">
+
+          <div class="ludo-color-choice">
+
+            <span
+              class="big-color green">
+              🟢
+            </span>
+
+            <div>
+
+              <input
+                id="ludoName0"
+                value="${
+                  player.name === "Visiteur"
+                  ? "PLAYER1"
+                  : player.name
+                }"
+                maxlength="12">
+
+              <div class="ludo-human">
+                👤 TOI
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="ludo-color-choice">
+
+            <span
+              class="big-color red">
+              🔴
+            </span>
+
+            <div>
+
+              <input
+                id="ludoName1"
+                value="PLAYER2"
+                maxlength="12">
+
+              <div class="ludo-cpu">
+                🤖 CPU
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="ludo-mode-buttons">
+
+          <button
+            onclick="ludoSelectPlayers(2)"
+            class="ludo-mode">
+
+            2P
+
+          </button>
+
+
+          <button
+            onclick="ludoSelectPlayers(3)"
+            class="ludo-mode">
+
+            3P
+
+          </button>
+
+
+          <button
+            onclick="ludoSelectPlayers(4)"
+            class="ludo-mode">
+
+            4P
+
+          </button>
+
+        </div>
+
+
+        <button
+          class="ludo-play"
+          onclick="ludoStartMatch(4)">
+
+          ▶ PLAY
+
+        </button>
+
+
+        <button
+          class="ludo-load"
+          onclick="ludoStartMatch(4)">
+
+          💾 LOAD
+
+        </button>
+
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+function ludoSelectPlayers(count){
+
+  ludoStartMatch(count);
+
+}
+
+
+/* =========================
+   DÉMARRER LA PARTIE
+========================= */
+
+function ludoStartMatch(count){
+
+  const name0 =
+    document.getElementById(
+      "ludoName0"
+    )?.value.trim()
+    || player.name
+    || "PLAYER1";
+
+
+  const name1 =
+    document.getElementById(
+      "ludoName1"
+    )?.value.trim()
+    || "PLAYER2";
+
 
   ludoState = {
+
+    players:[],
 
     turn:0,
 
@@ -983,309 +1376,295 @@ function ludoNewGame(){
 
     winner:null,
 
-    players:
-      LUDO_PLAYERS.map(p => ({
-
-        name:p.name,
-
-        color:p.color,
-
-        css:p.css,
-
-        start:p.start,
-
-        human:p.human,
-
-        pawns:[-1,-1,-1,-1],
-
-        finished:0
-
-      }))
+    animating:false
 
   };
+
+
+  for(
+    let i=0;
+    i<count;
+    i++
+  ){
+
+    ludoState.players.push({
+
+      id:i,
+
+      name:
+        i === 0
+        ? name0
+        : i === 1
+        ? name1
+        : "PLAYER" + (i+1),
+
+      color:
+        LUDO_COLORS[i],
+
+      human:
+        i === 0,
+
+      pawns:[
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+
+      finished:0
+
+    });
+
+  }
+
+
+  ludoShowBoard();
+
+}
+
+
+/* =========================
+   PLATEAU
+========================= */
+
+function ludoShowBoard(){
+
+  const box =
+    document.getElementById(
+      "ludoContent"
+    );
+
+
+  box.innerHTML = `
+
+    <div class="ludo-game-screen">
+
+      <div
+        id="ludoBoardArea"
+        class="ludo-board-area">
+      </div>
+
+
+      <div
+        id="ludoControls"
+        class="ludo-controls">
+      </div>
+
+
+      <button
+        class="ludo-new"
+        onclick="ludoNewGameFromBoard()">
+
+        🔄 NOUVELLE PARTIE
+
+      </button>
+
+    </div>
+
+  `;
+
 
   renderLudo();
 
 }
 
 
-/* =========================
-   STYLE LUDO
-========================= */
+function ludoNewGameFromBoard(){
 
-function ludoPrepareStyle(){
-
-  if(document.getElementById(
-    "ludoDynamicStyle"
-  ))
-    return;
-
-
-  const style =
-    document.createElement("style");
-
-  style.id =
-    "ludoDynamicStyle";
-
-  style.textContent = `
-
-    #ludoBoard{
-      display:grid !important;
-      grid-template-columns:repeat(15,1fr) !important;
-      grid-template-rows:repeat(15,1fr) !important;
-      gap:2px !important;
-      aspect-ratio:1/1 !important;
-      max-width:620px !important;
-      margin:18px auto !important;
-      padding:4px !important;
-      background:#20395d !important;
-      border-radius:18px !important;
-    }
-
-    .ludo-board-cell{
-      min-width:0;
-      min-height:0;
-      border:1px solid #526b8f;
-      border-radius:3px;
-      background:#102745;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      position:relative;
-      overflow:hidden;
-    }
-
-    .ludo-track{
-      background:#f4f4f4 !important;
-    }
-
-    .ludo-green-lane{
-      background:#39d98a !important;
-    }
-
-    .ludo-red-lane{
-      background:#ed5b67 !important;
-    }
-
-    .ludo-yellow-lane{
-      background:#f1d43b !important;
-    }
-
-    .ludo-blue-lane{
-      background:#55a8ed !important;
-    }
-
-    .ludo-star{
-      font-size:22px;
-    }
-
-    .ludo-house{
-      position:absolute;
-      inset:3px;
-      border-radius:8px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex-wrap:wrap;
-      gap:3px;
-    }
-
-    .ludo-house-green{
-      background:#18a558;
-    }
-
-    .ludo-house-red{
-      background:#d83a4b;
-    }
-
-    .ludo-house-yellow{
-      background:#e0a800;
-    }
-
-    .ludo-house-blue{
-      background:#2474d6;
-    }
-
-    .ludo-token{
-      width:28px;
-      height:28px;
-      min-width:28px;
-      border-radius:50%;
-      border:2px solid white;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:bold;
-      cursor:pointer;
-      box-shadow:0 2px 4px rgba(0,0,0,.35);
-      z-index:5;
-    }
-
-    .ludo-green{
-      background:#18a558;
-      color:white;
-    }
-
-    .ludo-red{
-      background:#d83a4b;
-      color:white;
-    }
-
-    .ludo-yellow{
-      background:#e0a800;
-      color:#111;
-    }
-
-    .ludo-blue{
-      background:#2474d6;
-      color:white;
-    }
-
-    .ludo-center{
-      background:linear-gradient(
-        135deg,
-        #18a558 0 25%,
-        #d83a4b 25% 50%,
-        #2474d6 50% 75%,
-        #e0a800 75%
-      ) !important;
-    }
-
-    .ludo-center::after{
-      content:"🏆";
-      font-size:22px;
-    }
-
-    @media(max-width:600px){
-
-      .ludo-token{
-        width:22px;
-        height:22px;
-        min-width:22px;
-        font-size:10px;
-      }
-
-      .ludo-star{
-        font-size:14px;
-      }
-
-    }
-
-  `;
-
-  document.head.appendChild(style);
-
-      }/* =========================
-   CALCUL POSITION
-========================= */
-
-function ludoAbsolutePosition(
-  playerIndex,
-  relative
-){
-
-  const p =
-    ludoState.players[playerIndex];
-
-  if(relative < 0)
-    return null;
-
-  if(relative >= 52)
-    return null;
-
-  return (
-    p.start + relative
-  ) % 52;
+  ludoShowSetup();
 
 }
 
 
 /* =========================
-   CELLULE DU PLATEAU
-========================= */
-
-function ludoCell(
-  board,
-  r,
-  c
-){
-
-  return board.children[
-    r * 15 + c
-  ];
-
-}
-
-
-/* =========================
-   DESSIN DU PLATEAU
+   DESSIN
 ========================= */
 
 function renderLudo(){
-
-  ludoPrepareStyle();
-
 
   if(!ludoState)
     return;
 
 
-  const board =
+  const boardArea =
     document.getElementById(
-      "ludoBoard"
+      "ludoBoardArea"
     );
 
-  if(!board)
+
+  if(!boardArea)
     return;
 
 
-  board.innerHTML = "";
+  boardArea.innerHTML = `
+
+    <div class="ludo-board">
+
+      ${ludoBuildCells()}
+
+    </div>
+
+  `;
 
 
-  /*
-   * Création des 225 cases.
-   */
+  ludoPlacePawns();
 
-  for(let r=0;r<15;r++){
 
-    for(let c=0;c<15;c++){
+  const controls =
+    document.getElementById(
+      "ludoControls"
+    );
 
-      const cell =
-        document.createElement("div");
 
-      cell.className =
-        "ludo-board-cell";
+  if(!controls)
+    return;
+
+
+  const current =
+    ludoState.players[
+      ludoState.turn
+    ];
+
+
+  controls.innerHTML = `
+
+    <div class="ludo-current">
+
+      <div class="ludo-current-player">
+
+        ${current.color.icon}
+
+        ${current.name}
+
+      </div>
+
+
+      <div
+        id="ludoDiceVisual"
+        class="ludo-dice">
+
+        ${
+          ludoState.dice
+          ? ludoDiceFace(
+              ludoState.dice
+            )
+          : "⚄"
+        }
+
+      </div>
+
+
+      <button
+        class="ludo-roll"
+        onclick="ludoRoll()"
+        ${
+          !current.human ||
+          ludoState.rolled ||
+          ludoState.winner ||
+          ludoState.animating
+          ? "disabled"
+          : ""
+        }>
+
+        🎲 LANCER LE DÉ
+
+      </button>
+
+
+      <div class="ludo-message">
+
+        ${
+          ludoState.winner
+          ? "🏆 " +
+            ludoState.winner.name +
+            " GAGNE !"
+          : ludoState.rolled
+          ? current.human
+            ? "👉 Choisis un pion."
+            : "🤖 Le CPU joue..."
+          : current.human
+          ? "À toi de jouer !"
+          : "🤖 Tour de " + current.name
+        }
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   CASES
+========================= */
+
+function ludoBuildCells(){
+
+  let html = "";
+
+
+  for(
+    let r=0;
+    r<15;
+    r++
+  ){
+
+    for(
+      let c=0;
+      c<15;
+      c++
+    ){
+
+      let classes =
+        "ludo-cell";
 
 
       /*
        * Maisons.
        */
 
-      if(r < 6 && c < 6){
+      if(
+        r<6 &&
+        c<6
+      ){
 
-        cell.style.background =
-          "#d83a4b";
-
-      }
-
-      if(r < 6 && c > 8){
-
-        cell.style.background =
-          "#18a558";
+        classes +=
+          " ludo-home-red";
 
       }
 
-      if(r > 8 && c < 6){
 
-        cell.style.background =
-          "#2474d6";
+      if(
+        r<6 &&
+        c>8
+      ){
+
+        classes +=
+          " ludo-home-green";
 
       }
 
-      if(r > 8 && c > 8){
 
-        cell.style.background =
-          "#e0a800";
+      if(
+        r>8 &&
+        c>8
+      ){
+
+        classes +=
+          " ludo-home-yellow";
+
+      }
+
+
+      if(
+        r>8 &&
+        c<6
+      ){
+
+        classes +=
+          " ludo-home-blue";
 
       }
 
@@ -1294,7 +1673,7 @@ function renderLudo(){
        * Parcours.
        */
 
-      const pathIndex =
+      const path =
         LUDO_PATH.findIndex(
           p =>
             p[0] === r &&
@@ -1302,24 +1681,17 @@ function renderLudo(){
         );
 
 
-      if(pathIndex >= 0){
+      if(path >= 0){
 
-        cell.classList.add(
-          "ludo-track"
-        );
-
-        cell.dataset.path =
-          pathIndex;
-
+        classes +=
+          " ludo-track";
 
         if(
-          LUDO_SAFE.includes(
-            pathIndex
-          )
+          LUDO_SAFE.includes(path)
         ){
 
-          cell.innerHTML =
-            `<span class="ludo-star">⭐</span>`;
+          classes +=
+            " ludo-safe";
 
         }
 
@@ -1327,29 +1699,22 @@ function renderLudo(){
 
 
       /*
-       * Couloirs finaux.
+       * Couloirs.
        */
 
-      LUDO_HOME_LANES.forEach(
-        (lane,laneIndex)=>{
+      LUDO_LANES.forEach(
+        (lane,i)=>{
 
-          const found =
+          if(
             lane.some(
               p =>
                 p[0] === r &&
                 p[1] === c
-            );
+            )
+          ){
 
-          if(found){
-
-            cell.classList.add(
-              [
-                "ludo-green-lane",
-                "ludo-red-lane",
-                "ludo-yellow-lane",
-                "ludo-blue-lane"
-              ][laneIndex]
-            );
+            classes +=
+              " ludo-lane-" + i;
 
           }
 
@@ -1362,31 +1727,62 @@ function renderLudo(){
        */
 
       if(
-        r >= 6 &&
-        r <= 8 &&
-        c >= 6 &&
-        c <= 8
+        r>=6 &&
+        r<=8 &&
+        c>=6 &&
+        c<=8
       ){
 
-        cell.classList.add(
-          "ludo-center"
-        );
+        classes +=
+          " ludo-center";
 
       }
 
 
-      board.appendChild(cell);
+      html += `
+
+        <div
+          class="${classes}"
+          data-r="${r}"
+          data-c="${c}">
+
+          ${
+            LUDO_SAFE.includes(path)
+            ? "⭐"
+            : ""
+          }
+
+        </div>
+
+      `;
 
     }
 
   }
 
 
-  /*
-   * Maisons des joueurs.
-   */
+  return html;
 
-  const housePositions = [
+}
+
+
+/* =========================
+   PLACER LES PIONS
+========================= */
+
+function ludoPlacePawns(){
+
+  const board =
+    document.querySelector(
+      ".ludo-board"
+    );
+
+
+  if(!board)
+    return;
+
+
+  const homes = [
 
     [
       [2,2],
@@ -1420,471 +1816,196 @@ function renderLudo(){
 
 
   ludoState.players.forEach(
-    (p,playerIndex)=>{
+    (p,pi)=>{
 
       p.pawns.forEach(
-        (pos,pawnIndex)=>{
+        (pos,si)=>{
 
-          if(pos !== -1)
-            return;
+          if(pos === -1){
 
-
-          const [
-            r,c
-          ] =
-            housePositions[
-              playerIndex
-            ][pawnIndex];
+            const [r,c] =
+              homes[pi][si];
 
 
-          const cell =
-            ludoCell(
+            ludoAddPawn(
               board,
               r,
-              c
+              c,
+              p,
+              si,
+              pi
             );
 
-
-          if(!cell)
             return;
 
+          }
 
-          const token =
-            document.createElement(
-              "button"
+
+          if(pos >= 0 && pos < 52){
+
+            const abs =
+              (
+                LUDO_START[pi] +
+                pos
+              ) % 52;
+
+
+            const [r,c] =
+              LUDO_PATH[abs];
+
+
+            ludoAddPawn(
+              board,
+              r,
+              c,
+              p,
+              si,
+              pi
             );
 
-          token.className =
-            "ludo-token " +
-            p.css;
+            return;
 
-          token.textContent =
-            pawnIndex + 1;
+          }
 
-          token.title =
-            `${p.name} - pion ${pawnIndex+1}`;
-
-
-          token.onclick = () =>
-            ludoSelectPawn(
-              playerIndex,
-              pawnIndex
-            );
-
-
-          cell.appendChild(
-            token
-          );
-
-        }
-      );
-
-    }
-  );
-
-
-  /*
-   * Pions sur le parcours.
-   */
-
-  ludoState.players.forEach(
-    (p,playerIndex)=>{
-
-      p.pawns.forEach(
-        (relative,pawnIndex)=>{
 
           if(
-            relative < 0 ||
-            relative >= 52
-          )
-            return;
+            pos >= 52 &&
+            pos <= 56
+          ){
+
+            const lane =
+              LUDO_LANES[pi];
 
 
-          const absolute =
-            ludoAbsolutePosition(
-              playerIndex,
-              relative
-            );
+            const point =
+              lane[
+                pos - 52
+              ];
 
 
-          const point =
-            LUDO_PATH[
-              absolute
-            ];
+            if(point){
 
+              ludoAddPawn(
+                board,
+                point[0],
+                point[1],
+                p,
+                si,
+                pi
+              );
 
-          if(!point)
-            return;
+            }
 
-
-          const cell =
-            ludoCell(
-              board,
-              point[0],
-              point[1]
-            );
-
-
-          if(!cell)
-            return;
-
-
-          const token =
-            document.createElement(
-              "button"
-            );
-
-          token.className =
-            "ludo-token " +
-            p.css;
-
-          token.textContent =
-            pawnIndex + 1;
-
-          token.title =
-            `${p.name} - pion ${pawnIndex+1}`;
-
-
-          token.onclick = () =>
-            ludoSelectPawn(
-              playerIndex,
-              pawnIndex
-            );
-
-
-          cell.appendChild(
-            token
-          );
+          }
 
         }
       );
 
     }
   );
-
-
-  /*
-   * Pions dans les couloirs finaux.
-   */
-
-  ludoState.players.forEach(
-    (p,playerIndex)=>{
-
-      p.pawns.forEach(
-        (relative,pawnIndex)=>{
-
-          if(
-            relative < 52 ||
-            relative > 56
-          )
-            return;
-
-
-          const lane =
-            LUDO_HOME_LANES[
-              playerIndex
-            ];
-
-          const point =
-            lane[
-              relative - 52
-            ];
-
-
-          if(!point)
-            return;
-
-
-          const cell =
-            ludoCell(
-              board,
-              point[0],
-              point[1]
-            );
-
-
-          if(!cell)
-            return;
-
-
-          const token =
-            document.createElement(
-              "button"
-            );
-
-          token.className =
-            "ludo-token " +
-            p.css;
-
-          token.textContent =
-            pawnIndex + 1;
-
-
-          token.onclick = () =>
-            ludoSelectPawn(
-              playerIndex,
-              pawnIndex
-            );
-
-
-          cell.appendChild(
-            token
-          );
-
-        }
-      );
-
-    }
-  );
-
-
-  /*
-   * Informations du joueur.
-   */
-
-  const current =
-    ludoState.players[
-      ludoState.turn
-    ];
-
-
-  const turnBox =
-    document.getElementById(
-      "ludoTurn"
-    );
-
-
-  if(turnBox){
-
-    turnBox.textContent =
-      current.color +
-      " " +
-      current.name;
-
-  }
-
-
-  const diceBox =
-    document.getElementById(
-      "ludoDice"
-    );
-
-
-  if(diceBox){
-
-    diceBox.textContent =
-      ludoState.dice
-      ? "🎲 " + ludoState.dice
-      : "🎲";
-
-  }
-
-
-  const message =
-    document.getElementById(
-      "ludoMessage"
-    );
-
-
-  if(message){
-
-    if(ludoState.winner){
-
-      message.textContent =
-        "🏆 " +
-        ludoState.winner.name +
-        " a gagné !";
-
-    }else if(ludoState.rolled){
-
-      if(current.human){
-
-        message.textContent =
-          "👉 Choisis un pion à déplacer.";
-
-      }else{
-
-        message.textContent =
-          "🤖 " +
-          current.name +
-          " réfléchit...";
-
-      }
-
-    }else{
-
-      if(current.human){
-
-        message.textContent =
-          "🎲 Lance le dé pour commencer.";
-
-      }else{
-
-        message.textContent =
-          "🤖 Tour de " +
-          current.name;
-
-      }
-
-    }
-
-  }
-
-
-  /*
-   * Bouton lancer.
-   */
-
-  const roll =
-    document.getElementById(
-      "ludoRoll"
-    );
-
-
-  if(roll){
-
-    roll.disabled =
-      !current.human ||
-      ludoState.rolled ||
-      !!ludoState.winner;
-
-  }
-
-
-  /*
-   * Résumé des joueurs.
-   */
-
-  const homes =
-    document.getElementById(
-      "ludoHomes"
-    );
-
-
-  if(homes){
-
-    homes.innerHTML =
-      ludoState.players.map(
-        (p,i)=>`
-
-          <div class="ludo-home">
-
-            <h3>
-              ${p.color}
-              ${p.name}
-            </h3>
-
-            <div
-              class="ludo-pawns">
-
-              ${p.pawns.map(
-                (pos,n)=>`
-
-                  <button
-                    class="ludo-token ${p.css}"
-                    onclick="ludoSelectPawn(${i},${n})">
-
-                    ${n+1}
-
-                  </button>
-
-                `
-              ).join("")}
-
-            </div>
-
-            <p>
-              🏆 ${p.finished}/4
-              pions arrivés
-            </p>
-
-          </div>
-
-        `
-      ).join("");
-
-  }
 
 }
 
 
 /* =========================
-   PEUT DÉPLACER
+   CRÉER UN PION
 ========================= */
 
-function ludoCanMove(
-  playerIndex,
+function ludoAddPawn(
+  board,
+  r,
+  c,
+  playerData,
   pawnIndex,
-  dice
+  playerIndex
 ){
 
-  const p =
-    ludoState.players[
-      playerIndex
-    ];
+  const cell =
+    board.querySelector(
+      `[data-r="${r}"][data-c="${c}"]`
+    );
 
 
-  const pos =
-    p.pawns[pawnIndex];
+  if(!cell)
+    return;
 
 
-  /*
-   * Dans la maison :
-   * il faut faire 6.
-   */
+  const token =
+    document.createElement(
+      "button"
+    );
 
-  if(pos === -1){
 
-    return dice === 6;
+  token.className =
+    "ludo-piece " +
+    playerData.color.css;
+
+
+  token.textContent =
+    "●";
+
+
+  token.title =
+    playerData.name +
+    " - Pion " +
+    (pawnIndex + 1);
+
+
+  if(
+    playerIndex ===
+    ludoState.turn &&
+    playerData.human &&
+    ludoState.rolled &&
+    ludoCanMove(
+      playerIndex,
+      pawnIndex,
+      ludoState.dice
+    )
+  ){
+
+    token.classList.add(
+      "ludo-selectable"
+    );
+
+
+    token.onclick = () =>
+      ludoMove(
+        playerIndex,
+        pawnIndex
+      );
 
   }
 
 
-  /*
-   * Pion terminé.
-   */
-
-  if(pos === 57)
-    return false;
-
-
-  /*
-   * Arrivée exacte.
-   */
-
-  return (
-    pos + dice <= 57
+  cell.appendChild(
+    token
   );
 
 }
 
 
 /* =========================
-   Y A-T-IL UN MOUVEMENT ?
+   DÉ
 ========================= */
 
-function ludoHasMove(
-  playerIndex,
-  dice
-){
+function ludoDiceFace(n){
 
-  return ludoState
-    .players[playerIndex]
-    .pawns
-    .some(
-      (_,i)=>
-        ludoCanMove(
-          playerIndex,
-          i,
-          dice
-        )
-    );
+  return [
+
+    "⚀",
+    "⚁",
+    "⚂",
+    "⚃",
+    "⚄",
+    "⚅"
+
+  ][n-1] || "⚄";
 
 }
 
 
 /* =========================
-   LANCER LE DÉ
+   LANCER
 ========================= */
 
 function ludoRoll(){
@@ -1892,10 +2013,12 @@ function ludoRoll(){
   if(!ludoState)
     return;
 
-  if(ludoState.winner)
-    return;
 
-  if(ludoState.rolled)
+  if(
+    ludoState.winner ||
+    ludoState.rolled ||
+    ludoState.animating
+  )
     return;
 
 
@@ -1918,6 +2041,7 @@ function ludoRoll(){
   ludoState.dice =
     dice;
 
+
   ludoState.rolled =
     true;
 
@@ -1925,96 +2049,73 @@ function ludoRoll(){
   renderLudo();
 
 
-  /*
-   * Aucun mouvement.
-   */
-
-  if(!ludoHasMove(
-    ludoState.turn,
-    dice
-  )){
-
-    const message =
-      document.getElementById(
-        "ludoMessage"
-      );
-
-
-    if(message){
-
-      message.textContent =
-        "❌ Aucun mouvement possible.";
-
-    }
-
+  if(
+    !ludoHasMove(
+      ludoState.turn,
+      dice
+    )
+  ){
 
     setTimeout(
-      () =>
+      () => {
+
         ludoNextTurn(
           dice === 6
-        ),
-      1000
+        );
+
+      },
+      900
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * S'il n'y a qu'un seul
+   * pion possible, on ne force
+   * pas le joueur à chercher.
+   */
+
+  const choices =
+    ludoState.players[
+      ludoState.turn
+    ].pawns
+    .map(
+      (_,i) => i
+    )
+    .filter(
+      i =>
+        ludoCanMove(
+          ludoState.turn,
+          i,
+          dice
+        )
+    );
+
+
+  if(choices.length === 1){
+
+    setTimeout(
+      () => {
+
+        ludoMove(
+          ludoState.turn,
+          choices[0]
+        );
+
+      },
+      350
     );
 
   }
 
-}
-
-
-/* =========================
-   CHOISIR UN PION
+  }/* =========================
+   RÈGLES DE DÉPLACEMENT
 ========================= */
 
-function ludoSelectPawn(
-  playerIndex,
-  pawnIndex
-){
-
-  if(!ludoState)
-    return;
-
-  if(ludoState.winner)
-    return;
-
-  if(
-    playerIndex !==
-    ludoState.turn
-  )
-    return;
-
-  if(!ludoState.rolled)
-    return;
-
-
-  const dice =
-    ludoState.dice;
-
-
-  if(!ludoCanMove(
-    playerIndex,
-    pawnIndex,
-    dice
-  )){
-
-    return;
-
-  }
-
-
-  ludoMovePawn(
-    playerIndex,
-    pawnIndex,
-    dice
-  );
-
-}
-
-
-/* =========================
-   DÉPLACER UN PION
-========================= */
-
-function ludoMovePawn(
+function ludoCanMove(
   playerIndex,
   pawnIndex,
   dice
@@ -2026,60 +2127,266 @@ function ludoMovePawn(
     ];
 
 
-  let pos =
+  const pos =
     p.pawns[pawnIndex];
 
 
   /*
-   * Sortie avec 6.
+   * Pion dans la maison.
+   * Il faut obligatoirement 6.
    */
 
   if(pos === -1){
 
-    pos = 0;
-
-  }else{
-
-    pos += dice;
+    return dice === 6;
 
   }
 
 
   /*
-   * Exactement 57 pour gagner.
+   * Pion déjà terminé.
    */
 
-  if(pos > 57){
+  if(pos === 56)
+    return false;
+
+
+  /*
+   * Arrivée exacte.
+   */
+
+  return (
+    pos + dice <= 56
+  );
+
+}
+
+
+function ludoHasMove(
+  playerIndex,
+  dice
+){
+
+  return ludoState
+    .players[playerIndex]
+    .pawns
+    .some(
+      (_,i) =>
+        ludoCanMove(
+          playerIndex,
+          i,
+          dice
+        )
+    );
+
+}
+
+
+/* =========================
+   DÉPLACER UN PION
+========================= */
+
+function ludoMove(
+  playerIndex,
+  pawnIndex
+){
+
+  if(!ludoState)
+    return;
+
+
+  if(ludoState.winner)
+    return;
+
+
+  const p =
+    ludoState.players[
+      playerIndex
+    ];
+
+
+  const dice =
+    ludoState.dice;
+
+
+  if(
+    !ludoCanMove(
+      playerIndex,
+      pawnIndex,
+      dice
+    )
+  )
+    return;
+
+
+  ludoState.animating =
+    true;
+
+
+  let start =
+    p.pawns[pawnIndex];
+
+
+  /*
+   * Sortie de maison.
+   */
+
+  if(start === -1){
+
+    p.pawns[pawnIndex] =
+      0;
+
+
+    ludoRenderAfterMove(
+      playerIndex,
+      pawnIndex,
+      dice
+    );
+
 
     return;
 
   }
 
 
-  p.pawns[pawnIndex] =
-    pos;
-
-
   /*
-   * Arrivée.
+   * Déplacement animé
+   * case par case.
    */
 
-  if(pos === 57){
+  let step = 0;
 
-    p.finished++;
 
-  }
+  const total =
+    dice;
+
+
+  const moveStep =
+    () => {
+
+      if(step >= total){
+
+        ludoFinishMove(
+          playerIndex,
+          pawnIndex,
+          dice
+        );
+
+        return;
+
+      }
+
+
+      p.pawns[pawnIndex]++;
+
+
+      step++;
+
+
+      renderLudo();
+
+
+      setTimeout(
+        moveStep,
+        160
+      );
+
+    };
+
+
+  moveStep();
+
+}
+
+
+/* =========================
+   SORTIE AVEC 6
+========================= */
+
+function ludoRenderAfterMove(
+  playerIndex,
+  pawnIndex,
+  dice
+){
+
+  renderLudo();
+
+
+  setTimeout(
+    () => {
+
+      ludoFinishMove(
+        playerIndex,
+        pawnIndex,
+        dice
+      );
+
+    },
+    300
+  );
+
+}
+
+
+/* =========================
+   FIN DU DÉPLACEMENT
+========================= */
+
+function ludoFinishMove(
+  playerIndex,
+  pawnIndex,
+  dice
+){
+
+  const p =
+    ludoState.players[
+      playerIndex
+    ];
 
 
   /*
-   * Capture uniquement
-   * sur le parcours commun.
+   * Capture.
    */
 
   ludoCapture(
     playerIndex,
     pawnIndex
   );
+
+
+  /*
+   * Pion arrivé au bout.
+   */
+
+  if(
+    p.pawns[pawnIndex] === 56
+  ){
+
+    /*
+     * On ne compte qu'une fois.
+     */
+
+    if(
+      !p._finishedPawns
+    ){
+
+      p._finishedPawns = {};
+
+    }
+
+
+    if(
+      !p._finishedPawns[pawnIndex]
+    ){
+
+      p._finishedPawns[pawnIndex] =
+        true;
+
+      p.finished++;
+
+    }
+
+  }
 
 
   /*
@@ -2092,23 +2399,36 @@ function ludoMovePawn(
       p;
 
 
+    ludoState.animating =
+      false;
+
+
+    renderLudo();
+
+
     if(p.human){
 
       player.points +=
         100;
 
+
       save();
 
 
-      alert(
-        "🏆 Félicitations ! " +
-        "+100 points !"
+      setTimeout(
+        () => {
+
+          alert(
+            "🏆 VICTOIRE !\n\n" +
+            "+100 points GameWin"
+          );
+
+        },
+        200
       );
 
     }
 
-
-    renderLudo();
 
     return;
 
@@ -2116,12 +2436,15 @@ function ludoMovePawn(
 
 
   /*
-   * Un 6 donne un tour
-   * supplémentaire.
+   * 6 = rejouer.
    */
 
+  const extra =
+    dice === 6;
+
+
   ludoNextTurn(
-    dice === 6
+    extra
   );
 
 }
@@ -2136,26 +2459,24 @@ function ludoCapture(
   pawnIndex
 ){
 
-  const player =
+  const p =
     ludoState.players[
       playerIndex
     ];
 
 
-  const pos =
-    player.pawns[
-      pawnIndex
-    ];
+  const relative =
+    p.pawns[pawnIndex];
 
 
   /*
-   * Les zones finales
-   * ne capturent pas.
+   * Les couloirs finaux
+   * ne peuvent pas être capturés.
    */
 
   if(
-    pos < 0 ||
-    pos >= 52
+    relative < 0 ||
+    relative >= 52
   ){
 
     return;
@@ -2164,14 +2485,14 @@ function ludoCapture(
 
 
   const absolute =
-    ludoAbsolutePosition(
-      playerIndex,
-      pos
-    );
+    (
+      LUDO_START[playerIndex] +
+      relative
+    ) % 52;
 
 
   /*
-   * Cases protégées.
+   * Case protégée.
    */
 
   if(
@@ -2185,34 +2506,37 @@ function ludoCapture(
   }
 
 
-  /*
-   * Capture des adversaires
-   * présents sur la même case.
-   */
-
   ludoState.players.forEach(
-    (p,i)=>{
+    (enemy,enemyIndex)=>{
 
-      if(i === playerIndex)
+      if(
+        enemyIndex ===
+        playerIndex
+      )
         return;
 
 
-      p.pawns =
-        p.pawns.map(
-          (enemyPos,enemyPawn)=>{
+      enemy.pawns =
+        enemy.pawns.map(
+          enemyPos => {
 
-            if(enemyPos < 0)
+            if(
+              enemyPos < 0 ||
+              enemyPos >= 52
+            ){
+
               return enemyPos;
 
-            if(enemyPos >= 52)
-              return enemyPos;
+            }
 
 
             const enemyAbsolute =
-              ludoAbsolutePosition(
-                i,
+              (
+                LUDO_START[
+                  enemyIndex
+                ] +
                 enemyPos
-              );
+              ) % 52;
 
 
             if(
@@ -2233,7 +2557,10 @@ function ludoCapture(
     }
   );
 
-    }/* =========================
+}
+
+
+/* =========================
    TOUR SUIVANT
 ========================= */
 
@@ -2241,30 +2568,32 @@ function ludoNextTurn(
   extra
 ){
 
-  if(!ludoState)
-    return;
-
-  if(ludoState.winner)
+  if(
+    !ludoState ||
+    ludoState.winner
+  )
     return;
 
 
   ludoState.rolled =
     false;
 
+
   ludoState.dice =
     0;
 
 
-  /*
-   * Si 6 : même joueur.
-   */
+  ludoState.animating =
+    false;
+
 
   if(!extra){
 
     ludoState.turn =
       (
         ludoState.turn + 1
-      ) % 4;
+      ) %
+      ludoState.players.length;
 
   }
 
@@ -2278,18 +2607,11 @@ function ludoNextTurn(
     ];
 
 
-  /*
-   * CPU.
-   */
-
-  if(
-    !current.human &&
-    !ludoState.winner
-  ){
+  if(!current.human){
 
     setTimeout(
       ludoCpuTurn,
-      900
+      800
     );
 
   }
@@ -2298,26 +2620,24 @@ function ludoNextTurn(
 
 
 /* =========================
-   TOUR CPU
+   CPU
 ========================= */
 
 function ludoCpuTurn(){
 
-  if(!ludoState)
+  if(
+    !ludoState ||
+    ludoState.winner
+  )
     return;
 
-  if(ludoState.winner)
-    return;
 
-
-  const playerIndex =
+  const index =
     ludoState.turn;
 
 
   const p =
-    ludoState.players[
-      playerIndex
-    ];
+    ludoState.players[index];
 
 
   if(p.human)
@@ -2333,6 +2653,7 @@ function ludoCpuTurn(){
   ludoState.dice =
     dice;
 
+
   ludoState.rolled =
     true;
 
@@ -2343,8 +2664,8 @@ function ludoCpuTurn(){
   setTimeout(
     () => {
 
-      ludoCpuMove(
-        playerIndex,
+      ludoCpuChoose(
+        index,
         dice
       );
 
@@ -2359,17 +2680,10 @@ function ludoCpuTurn(){
    CHOIX CPU
 ========================= */
 
-function ludoCpuMove(
+function ludoCpuChoose(
   playerIndex,
   dice
 ){
-
-  if(!ludoState)
-    return;
-
-  if(ludoState.winner)
-    return;
-
 
   const p =
     ludoState.players[
@@ -2377,26 +2691,19 @@ function ludoCpuMove(
     ];
 
 
-  const choices = [];
-
-
-  p.pawns.forEach(
-    (pos,i)=>{
-
-      if(
-        ludoCanMove(
-          playerIndex,
-          i,
-          dice
-        )
-      ){
-
-        choices.push(i);
-
-      }
-
-    }
-  );
+  const choices =
+    p.pawns
+      .map(
+        (_,i) => i
+      )
+      .filter(
+        i =>
+          ludoCanMove(
+            playerIndex,
+            i,
+            dice
+          )
+      );
 
 
   /*
@@ -2414,23 +2721,20 @@ function ludoCpuMove(
   }
 
 
-  /*
-   * Priorité CPU :
-   *
-   * 1. Finir un pion
-   * 2. Sortir avec un 6
-   * 3. Avancer le plus loin
-   */
-
   let selected =
     choices[0];
 
+
+  /*
+   * Priorité 1 :
+   * terminer un pion.
+   */
 
   const finish =
     choices.find(
       i =>
         p.pawns[i] >= 0 &&
-        p.pawns[i] + dice === 57
+        p.pawns[i] + dice === 56
     );
 
 
@@ -2442,6 +2746,11 @@ function ludoCpuMove(
       finish;
 
   }else{
+
+    /*
+     * Priorité 2 :
+     * sortir un pion avec 6.
+     */
 
     const home =
       choices.find(
@@ -2460,22 +2769,29 @@ function ludoCpuMove(
 
     }else{
 
+      /*
+       * Priorité 3 :
+       * pion le plus avancé.
+       */
+
       selected =
         choices.reduce(
-          (best,current)=>{
+          (best,i) => {
 
             const a =
               p.pawns[best] < 0
               ? 0
               : p.pawns[best];
 
+
             const b =
-              p.pawns[current] < 0
+              p.pawns[i] < 0
               ? 0
-              : p.pawns[current];
+              : p.pawns[i];
+
 
             return b > a
-              ? current
+              ? i
               : best;
 
           },
@@ -2490,10 +2806,9 @@ function ludoCpuMove(
   setTimeout(
     () => {
 
-      ludoMovePawn(
+      ludoMove(
         playerIndex,
-        selected,
-        dice
+        selected
       );
 
     },
@@ -2504,34 +2819,391 @@ function ludoCpuMove(
 
 
 /* =========================
-   RENDU APRÈS CHANGEMENT
+   STYLE LUDO
 ========================= */
 
-function ludoRefresh(){
+function ludoInjectStyle(){
 
-  renderLudo();
-
-}
-
-
-/* =========================
-   NOUVELLE PARTIE
-========================= */
-
-function resetLudo(){
-
-  ludoNewGame();
-
-}
+  if(
+    document.getElementById(
+      "ludoClassicStyle"
+    )
+  )
+    return;
 
 
-/* =========================
-   RETOUR AUX JEUX
-========================= */
+  const style =
+    document.createElement(
+      "style"
+    );
 
-function ludoBack(){
 
-  showPage("games");
+  style.id =
+    "ludoClassicStyle";
+
+
+  style.textContent = `
+
+    .ludo-app{
+      max-width:700px;
+      margin:0 auto;
+      padding:8px;
+    }
+
+    .ludo-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:12px;
+    }
+
+    .ludo-title{
+      font-weight:900;
+      font-size:24px;
+      color:#ffd21c;
+    }
+
+    .ludo-points{
+      background:#152b4c;
+      border:2px solid #29466e;
+      border-radius:12px;
+      padding:8px 12px;
+      font-weight:bold;
+    }
+
+    .ludo-back{
+      border:0;
+      border-radius:12px;
+      background:#173254;
+      color:white;
+      font-size:26px;
+      padding:7px 12px;
+    }
+
+    .ludo-setup{
+      background:#0b1830;
+      border-radius:22px;
+      padding:14px;
+      text-align:center;
+    }
+
+    .ludo-setup-title{
+      font-size:28px;
+      font-weight:900;
+      color:#ffd21c;
+      margin:12px;
+    }
+
+    .ludo-setup-panel{
+      background:#5d4775;
+      border:4px solid #d7a632;
+      border-radius:24px;
+      padding:20px;
+      box-shadow:0 6px 0 #30203f;
+    }
+
+    .ludo-setup-panel h1{
+      color:white;
+      font-size:23px;
+      margin:4px 0 20px;
+    }
+
+    .ludo-player-preview{
+      background:#6f5689;
+      border:3px solid #e4b33e;
+      border-radius:18px;
+      padding:12px;
+      margin-bottom:18px;
+    }
+
+    .ludo-color-choice{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin:9px 0;
+    }
+
+    .big-color{
+      font-size:45px;
+    }
+
+    .ludo-color-choice input{
+      width:100%;
+      box-sizing:border-box;
+      background:#3c2850;
+      border:2px solid #a68ac2;
+      border-radius:10px;
+      color:white;
+      padding:12px;
+      font-size:17px;
+      font-weight:bold;
+    }
+
+    .ludo-human,
+    .ludo-cpu{
+      color:white;
+      font-size:12px;
+      margin-top:3px;
+      text-align:left;
+    }
+
+    .ludo-mode-buttons{
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      flex-wrap:wrap;
+      margin:15px 0;
+    }
+
+    .ludo-mode{
+      min-width:90px;
+      border:3px solid #e0aa31;
+      border-radius:14px;
+      padding:13px 22px;
+      background:#4c9be9;
+      color:white;
+      font-size:25px;
+      font-weight:900;
+    }
+
+    .ludo-play{
+      border:3px solid #159044;
+      border-radius:15px;
+      padding:14px 30px;
+      background:#39db78;
+      color:white;
+      font-size:25px;
+      font-weight:900;
+      margin:8px;
+    }
+
+    .ludo-load{
+      border:3px solid #d8a52d;
+      border-radius:15px;
+      padding:14px 25px;
+      background:#378ddd;
+      color:white;
+      font-size:20px;
+      font-weight:900;
+      margin:8px;
+    }
+
+    .ludo-board{
+      width:100%;
+      max-width:600px;
+      aspect-ratio:1;
+      margin:10px auto;
+      display:grid;
+      grid-template-columns:repeat(15,1fr);
+      grid-template-rows:repeat(15,1fr);
+      gap:1px;
+      padding:3px;
+      box-sizing:border-box;
+      background:#102642;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 5px 20px rgba(0,0,0,.35);
+    }
+
+    .ludo-cell{
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid #718097;
+      font-size:11px;
+      overflow:visible;
+    }
+
+    .ludo-home-red{
+      background:#ed2818;
+    }
+
+    .ludo-home-green{
+      background:#19d96b;
+    }
+
+    .ludo-home-yellow{
+      background:#f5dc00;
+    }
+
+    .ludo-home-blue{
+      background:#1b8fca;
+    }
+
+    .ludo-track{
+      background:#f7f7f7;
+    }
+
+    .ludo-lane-0{
+      background:#50db91;
+    }
+
+    .ludo-lane-1{
+      background:#f46a6a;
+    }
+
+    .ludo-lane-2{
+      background:#f3dd40;
+    }
+
+    .ludo-lane-3{
+      background:#58a8e9;
+    }
+
+    .ludo-center{
+      background:
+        linear-gradient(
+          45deg,
+          #19d96b 0 25%,
+          #ed2818 25% 50%,
+          #58a8e9 50% 75%,
+          #f3dd40 75%
+        );
+    }
+
+    .ludo-safe{
+      color:#666;
+      font-size:16px;
+      font-weight:bold;
+    }
+
+    .ludo-piece{
+      width:27px;
+      height:27px;
+      min-width:27px;
+      border-radius:50%;
+      border:2px solid white;
+      z-index:20;
+      position:relative;
+      box-shadow:
+        0 3px 5px rgba(0,0,0,.45),
+        inset 0 2px 2px rgba(255,255,255,.45);
+      color:transparent;
+      padding:0;
+    }
+
+    .ludo-green{
+      background:#12c85c;
+    }
+
+    .ludo-red{
+      background:#e93228;
+    }
+
+    .ludo-yellow{
+      background:#f1d20a;
+    }
+
+    .ludo-blue{
+      background:#159bd5;
+    }
+
+    .ludo-selectable{
+      outline:4px solid #ffd21c;
+      animation:ludoPulse .7s infinite alternate;
+      cursor:pointer;
+    }
+
+    @keyframes ludoPulse{
+      from{
+        transform:scale(1);
+      }
+      to{
+        transform:scale(1.18);
+      }
+    }
+
+    .ludo-controls{
+      background:#0d1d36;
+      border:2px solid #27476f;
+      border-radius:18px;
+      padding:12px;
+      text-align:center;
+    }
+
+    .ludo-current-player{
+      color:white;
+      font-size:21px;
+      font-weight:900;
+      margin-bottom:5px;
+    }
+
+    .ludo-dice{
+      font-size:65px;
+      line-height:1;
+      margin:4px;
+      text-shadow:0 4px 7px rgba(0,0,0,.5);
+    }
+
+    .ludo-roll{
+      border:0;
+      border-radius:13px;
+      padding:13px 22px;
+      background:#ffd21c;
+      color:#111;
+      font-weight:900;
+      font-size:18px;
+    }
+
+    .ludo-roll:disabled{
+      opacity:.45;
+    }
+
+    .ludo-message{
+      color:#ffd21c;
+      font-weight:bold;
+      margin-top:8px;
+      min-height:24px;
+    }
+
+    .ludo-new{
+      width:100%;
+      margin-top:10px;
+      border:0;
+      border-radius:12px;
+      padding:12px;
+      background:#ffd21c;
+      color:#111;
+      font-weight:900;
+      font-size:16px;
+    }
+
+    @media(max-width:500px){
+
+      .ludo-title{
+        font-size:19px;
+      }
+
+      .ludo-piece{
+        width:19px;
+        height:19px;
+        min-width:19px;
+        border-width:1px;
+      }
+
+      .ludo-safe{
+        font-size:10px;
+      }
+
+      .ludo-dice{
+        font-size:52px;
+      }
+
+      .ludo-mode{
+        min-width:75px;
+        padding:10px 15px;
+      }
+
+    }
+
+  `;
+
+
+  document.head.appendChild(
+    style
+  );
 
 }
 
