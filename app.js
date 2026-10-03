@@ -1423,3 +1423,375 @@ homes.appendChild(home);
 
 
 render();f
+/* ===== LUDO NIVEAU MOYEN ===== */
+let ludoState=null;
+
+const ludoColors=["🔴","🔵","🟢","🟡"];
+
+function ensureLudoPage(){
+  if(document.getElementById("ludoGame")) return;
+
+  const section=document.createElement("section");
+
+  section.id="ludoGame";
+  section.className="page";
+
+  section.innerHTML=`
+    <div class="quizbox">
+      <h2>🎲 Ludo — Niveau moyen</h2>
+
+      <p id="ludoInfo">À toi de jouer.</p>
+
+      <div id="ludoBoard"
+      style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:20px 0;">
+      </div>
+
+      <div id="ludoPawns" style="display:grid;gap:8px;"></div>
+
+      <button class="primary"
+      onclick="showPage('games')">
+      Retour aux jeux
+      </button>
+    </div>`;
+
+  document.body.appendChild(section);
+}
+
+function startLudoGame(){
+
+  ensureLudoPage();
+
+  ludoState={
+    turn:0,
+
+    players:[
+      {name:"Toi",color:"🔴",pos:[-1,-1,-1,-1],score:0,human:true},
+      {name:"CPU Bleu",color:"🔵",pos:[-1,-1,-1,-1],score:0},
+      {name:"CPU Vert",color:"🟢",pos:[-1,-1,-1,-1],score:0},
+      {name:"CPU Jaune",color:"🟡",pos:[-1,-1,-1,-1],score:0}
+    ],
+
+    winner:false
+  };
+
+  showPage("ludoGame");
+
+  renderLudo();
+}
+
+function ludoRoll(){
+
+  if(!ludoState || ludoState.winner)return;
+
+  const p=ludoState.players[ludoState.turn];
+
+  const dice=Math.floor(Math.random()*6)+1;
+
+  document.getElementById("ludoInfo").textContent=
+  `${p.color} ${p.name} a fait ${dice}.`;
+
+  if(p.human){
+
+    renderLudoChoices(dice);
+
+  }else{
+
+    setTimeout(()=>ludoCpuMove(dice),500);
+
+  }
+}
+
+function renderLudo(){
+
+  const board=document.getElementById("ludoBoard");
+
+  board.innerHTML="";
+
+  for(let i=0;i<25;i++){
+
+    const cell=document.createElement("div");
+
+    cell.style.cssText=
+    "min-height:45px;border:1px solid #31527d;border-radius:6px;background:#102745;display:flex;align-items:center;justify-content:center;font-size:22px";
+
+    const occupants=[];
+
+    ludoState.players.forEach(p=>{
+
+      p.pos.forEach((pos,j)=>{
+
+        if(pos===i){
+
+          occupants.push(p.color+(j+1));
+
+        }
+
+      });
+
+    });
+
+    cell.textContent=
+    occupants.join(" ")||
+    ((i+1)%5===0?"⭐":"");
+
+    board.appendChild(cell);
+  }
+
+  const pawns=document.getElementById("ludoPawns");
+
+  pawns.innerHTML="";
+
+  ludoState.players[0].pos.forEach((pos,i)=>{
+
+    const b=document.createElement("button");
+
+    b.className="answer";
+
+    b.textContent=
+    `🔴 Pion ${i+1} — ${
+      pos<0
+      ?"Maison"
+      :pos===24
+      ?"Arrivée"
+      :"Case "+(pos+1)
+    }`;
+
+    b.disabled=true;
+
+    pawns.appendChild(b);
+  });
+
+  const roll=document.createElement("button");
+
+  roll.className="primary";
+
+  roll.textContent="🎲 Lancer le dé";
+
+  roll.onclick=ludoRoll;
+
+  if(ludoState.turn!==0){
+
+    roll.disabled=true;
+
+  }
+
+  pawns.appendChild(roll);
+}
+
+function renderLudoChoices(dice){
+
+  renderLudo();
+
+  const pawns=document.getElementById("ludoPawns");
+
+  ludoState.players[0].pos.forEach((pos,i)=>{
+
+    const b=pawns.children[i];
+
+    const can=
+    (pos<0&&dice===6)||
+    (pos>=0&&pos<24&&pos+dice<=24);
+
+    b.disabled=!can;
+
+    b.onclick=()=>{
+
+      moveLudoPawn(0,i,dice);
+
+    };
+
+  });
+
+  const extra=document.createElement("button");
+
+  extra.className="answer";
+
+  extra.textContent="Passer le tour";
+
+  extra.onclick=()=>nextLudoTurn(dice===6);
+
+  pawns.appendChild(extra);
+}
+
+function moveLudoPawn(playerIndex,pawnIndex,dice){
+
+  const p=ludoState.players[playerIndex];
+
+  let pos=p.pos[pawnIndex];
+
+  if(pos<0){
+
+    pos=0;
+
+  }else{
+
+    pos+=dice;
+
+  }
+
+  p.pos[pawnIndex]=pos;
+
+  if(pos===24){
+
+    p.score++;
+
+  }
+
+  ludoCapture(playerIndex,pos);
+
+  if(p.score>=4){
+
+    ludoState.winner=true;
+
+    document.getElementById("ludoInfo").textContent=
+    `🏆 ${p.name} gagne ! +100 points`;
+
+    if(p.human){
+
+      player.points+=100;
+
+      save();
+
+    }
+
+    renderLudo();
+
+    return;
+  }
+
+  nextLudoTurn(dice===6);
+}
+
+function ludoCapture(playerIndex,pos){
+
+  if(pos<=0||pos>=24)return;
+
+  ludoState.players.forEach((p,i)=>{
+
+    if(i===playerIndex)return;
+
+    p.pos=p.pos.map(x=>x===pos?-1:x);
+
+  });
+}
+
+function nextLudoTurn(extra){
+
+  ludoState.turn=
+  extra
+  ?ludoState.turn
+  :(ludoState.turn+1)%4;
+
+  renderLudo();
+
+  if(ludoState.turn!==0&&!ludoState.winner){
+
+    setTimeout(ludoCpuTurn,500);
+
+  }
+}
+
+function ludoCpuTurn(){
+
+  if(!ludoState||
+     ludoState.winner||
+     ludoState.turn===0)return;
+
+  const dice=Math.floor(Math.random()*6)+1;
+
+  const p=ludoState.players[ludoState.turn];
+
+  let choices=p.pos.map((pos,i)=>{
+
+    if(pos<0&&dice===6)return i;
+
+    if(pos>=0&&pos<24&&pos+dice<=24)return i;
+
+    return -1;
+
+  }).filter(i=>i>=0);
+
+  if(choices.length){
+
+    choices.sort((a,b)=>{
+
+      const pa=p.pos[a];
+
+      const pb=p.pos[b];
+
+      return (pb<0?0:pb)-(pa<0?0:pa);
+
+    });
+
+    moveLudoPawn(
+      ludoState.turn,
+      choices[0],
+      dice
+    );
+
+  }else{
+
+    nextLudoTurn(dice===6);
+
+  }
+}
+
+function ludoCpuMove(dice){
+
+  const p=ludoState.players[ludoState.turn];
+
+  const choices=p.pos.map((pos,i)=>{
+
+    if(pos<0&&dice===6)return i;
+
+    if(pos>=0&&pos<24&&pos+dice<=24)return i;
+
+    return -1;
+
+  }).filter(i=>i>=0);
+
+  if(choices.length){
+
+    moveLudoPawn(
+      ludoState.turn,
+      choices[0],
+      dice
+    );
+
+  }else{
+
+    nextLudoTurn(dice===6);
+
+  }
+}
+
+const oldRenderForLudo=render;
+
+render=function(){
+
+  oldRenderForLudo();
+
+  const grid=document.getElementById("gameGrid");
+
+  if(!grid)return;
+
+  [...grid.querySelectorAll(".game")].forEach(card=>{
+
+    const title=card.querySelector("h3");
+
+    const btn=card.querySelector("button");
+
+    if(
+      title&&
+      btn&&
+      title.textContent.trim().toLowerCase()==="ludo"
+    ){
+
+      btn.onclick=startLudoGame;
+
+    }
+
+  });
+};
+
+render();
