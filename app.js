@@ -25,12 +25,39 @@ function showPage(id){document.querySelectorAll(".page").forEach(x=>x.classList.
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 function render(){
 document.getElementById("userArea").innerHTML=`<button class="primary" onclick="openLogin()">${player.name==="Visiteur"?"S'inscrire":"👤 "+player.name}</button>`;
-document.getElementById("statGames").textContent=games.length;document.getElementById("statPlayers").textContent="1";document.getElementById("statPoints").textContent=player.points;
+document.getElementById("gameGrid").innerHTML=games.map((g,i)=>`<div class="game"><div class="icon">${g.icon}</div><h3>${g.name}</h3><p class="muted">Joue et gagne jusqu'à ${g.points} points.</p>${g.type==="quiz"?`<button class="primary" onclick="startQuiz()">Jouer</button>`:g.type==="number"?`<button class="primary" onclick="startNumberGame()">Jouer</button>`:`<button class="primary" onclick="alert('Ce jeu sera ajouté dans une prochaine version.')">Jouer</button>`}</div>`).join("");
 document.getElementById("aGames").textContent=games.length;document.getElementById("aPlayers").textContent="1";document.getElementById("aPoints").textContent=player.points;
 document.getElementById("gameGrid").innerHTML=games.map((g,i)=>`<div class="game"><div class="icon">${g.icon}</div><h3>${g.name}</h3><p class="muted">Joue et gagne jusqu'à ${g.points} points.</p>${g.type==="quiz"?`<button class="primary" onclick="startQuiz()">Jouer</button>`:`<button class="primary" onclick="alert('Ce jeu sera ajouté dans une prochaine version.')">Jouer</button>`}</div>`).join("");
 document.getElementById("rewardGrid").innerHTML=rewards.map(r=>`<div class="reward"><div class="icon">${r.icon}</div><h3>${r.name}</h3><p>${r.cost} points</p><button class="primary" onclick="claim(${r.cost},'${r.name.replaceAll("'","")}')">Échanger</button></div>`).join("");
 document.getElementById("rankingBody").innerHTML=`<tr><td>1</td><td>${player.name}</td><td>${player.points.toLocaleString("fr-FR")}</td></tr>`;
+}let secretNumber=0;
+
+function startNumberGame(){
+  secretNumber=Math.floor(Math.random()*100)+1;
+  document.getElementById("numberGuess").value="";
+  document.getElementById("numberResult").textContent="Entre un nombre entre 1 et 100.";
+  showPage("numberGame");
 }
+
+function guessNumber(){
+  let n=+document.getElementById("numberGuess").value;
+
+  if(!n||n<1||n>100){
+    alert("Entre un nombre entre 1 et 100.");
+    return;
+  }
+
+  if(n===secretNumber){
+    player.points+=50;
+    document.getElementById("numberResult").textContent="🎉 Bravo ! Tu as trouvé ! +50 points";
+    secretNumber=0;
+    save();
+  }else if(n<secretNumber){
+    document.getElementById("numberResult").textContent="⬆️ Plus grand !";
+  }else{
+    document.getElementById("numberResult").textContent="⬇️ Plus petit !";
+  }
+} comment
 function openLogin(){document.getElementById("loginModal").classList.remove("hidden")}
 function closeLogin(){document.getElementById("loginModal").classList.add("hidden")}
 function login(){let n=document.getElementById("username").value.trim();if(!n)return alert("Entre un pseudo.");player.name=n;closeLogin();save()}
