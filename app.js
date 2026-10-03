@@ -40,16 +40,9 @@ document.getElementById("statPoints").textContent=player.points;
 document.getElementById("aGames").textContent=games.length;
 document.getElementById("aPlayers").textContent="1";
 document.getElementById("aPoints").textContent=player.points;
-
 document.getElementById("gameGrid").innerHTML=games.map((g,i)=>`<div class="game"><div class="icon">${g.icon}</div><h3>${g.name}</h3><p class="muted">Joue et gagne jusqu'à ${g.points} points.</p>${g.type==="quiz"?`<button class="primary" onclick="startQuiz()">Jouer</button>`:g.type==="number"?`<button class="primary" onclick="startNumberGame()">Jouer</button>`:`<button class="primary" onclick="alert('Ce jeu sera ajouté dans une prochaine version.')">Jouer</button>`}</div>`).join("");
-
-document.getElementById("rewardGrid").innerHTML=rewards.map(r=>`<div class="reward"><div class="icon">${r.icon}</div><h3>${r.name}</h3><p>${r.cost} points</p><button class="primary" onclick="claim(${r.cost},'${r.name}')">Échanger</button></div>`).join("");
-
-document.getElementById("rankingBody").innerHTML=`<tr><td>1</td><td>${player.name}</td><td>${player.points.toLocaleString("fr-FR")}</td></tr>`;
-  }
 document.getElementById("rewardGrid").innerHTML=rewards.map(r=>`<div class="reward"><div class="icon">${r.icon}</div><h3>${r.name}</h3><p>${r.cost} points</p><button class="primary" onclick="claim(${r.cost},'${r.name}')">Échanger</button></div>`).join("");
 document.getElementById("rankingBody").innerHTML=`<tr><td>1</td><td>${player.name}</td><td>${player.points.toLocaleString("fr-FR")}</td></tr>`;
-}
 }let secretNumber=0;
 
 function startNumberGame(){
