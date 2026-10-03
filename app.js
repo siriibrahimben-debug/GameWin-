@@ -41,8 +41,13 @@ document.getElementById("aGames").textContent=games.length;
 document.getElementById("aPlayers").textContent="1";
 document.getElementById("aPoints").textContent=player.points;
 document.getElementById("gameGrid").innerHTML=games.map((g,i)=>`<div class="game"><div class="icon">${g.icon}</div><h3>${g.name}</h3><p class="muted">Joue et gagne jusqu'à ${g.points} points.</p>${g.type==="quiz"?`<button class="primary" onclick="startQuiz()">Jouer</button>`:g.type==="number"?`<button class="primary" onclick="startNumberGame()">Jouer</button>`:`<button class="primary" onclick="alert('Ce jeu sera ajouté dans une prochaine version.')">Jouer</button>`}</div>`).join("");
-d
+function render(){
+...
+document.getElementById("rankingBody").innerHTML=`...`;
+}
+
 let secretNumber=0;
+
 function startNumberGame(){
   secretNumber=Math.floor(Math.random()*100)+1;
   document.getElementById("numberGuess").value="";
