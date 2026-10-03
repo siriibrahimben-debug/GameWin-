@@ -6,9 +6,13 @@
 <title>GameWin</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
 <header>
+
   <div class="logo">🎮 <b>Game<span>Win</span></b></div>
+
   <nav>
     <button data-page="home">Accueil</button>
     <button data-page="games">Jeux</button>
@@ -16,83 +20,290 @@
     <button data-page="rewards">Récompenses</button>
     <button data-page="admin">Admin</button>
   </nav>
+
   <div id="userArea"></div>
+
 </header>
 
 <main>
+
 <section id="home" class="page active">
+
   <div class="hero">
+
     <div>
+
       <p class="eyebrow">PLATEFORME DE DÉFIS</p>
-      <h1>Joue, relève des défis,<br><span>gagne des points !</span></h1>
-      <p>GameWin permet de jouer à des défis de compétence, d'accumuler des points et de les échanger contre des récompenses définies par l'administrateur.</p>
-      <button class="primary" onclick="showPage('games')">Commencer maintenant →</button>
+
+      <h1>
+        Joue, relève des défis,<br>
+        <span>gagne des points !</span>
+      </h1>
+
+      <p>
+        GameWin permet de jouer à des défis de compétence,
+        d'accumuler des points et de les échanger contre des
+        récompenses définies par l'administrateur.
+      </p>
+
+      <button class="primary" onclick="showPage('games')">
+        Commencer maintenant →
+      </button>
+
     </div>
-    <div class="hero-art">🏆<br>🎮</div>
+
+    <div class="hero-art">
+      🏆<br>🎮
+    </div>
+
   </div>
+
   <div class="cards">
-    <div class="stat"><b id="statGames">0</b><small>Jeux disponibles</small></div>
-    <div class="stat"><b id="statPlayers">1</b><small>Joueurs</small></div>
-    <div class="stat"><b id="statPoints">0</b><small>Mes points</small></div>
+
+    <div class="stat">
+      <b id="statGames">0</b>
+      <small>Jeux disponibles</small>
+    </div>
+
+    <div class="stat">
+      <b id="statPlayers">1</b>
+      <small>Joueurs</small>
+    </div>
+
+    <div class="stat">
+      <b id="statPoints">0</b>
+      <small>Mes points</small>
+    </div>
+
   </div>
+
 </section>
+
 
 <section id="games" class="page">
+
   <h2>🎮 Nos jeux</h2>
+
   <div id="gameGrid" class="grid"></div>
+
 </section>
+
 
 <section id="quiz" class="page">
+
   <div class="quizbox">
-    <p id="quizMeta"></p><h2 id="question"></h2><div id="answers"></div>
+
+    <p id="quizMeta"></p>
+
+    <h2 id="question"></h2>
+
+    <div id="answers"></div>
+
     <p id="quizResult"></p>
+
   </div>
+
 </section>
+
+
 <section id="numberGame" class="page">
+
   <div class="quizbox">
+
     <h2>🔢 Devine le nombre</h2>
-    <p>J'ai choisi un nombre entre 1 et 100.</p>
-    <input id="numberGuess" type="number" min="1" max="100" placeholder="Ton nombre">
-    <button class="primary" onclick="guessNumber()">Deviner</button>
+
+    <p>
+      J'ai choisi un nombre entre 1 et 100.
+    </p>
+
+    <input
+      id="numberGuess"
+      type="number"
+      min="1"
+      max="100"
+      placeholder="Ton nombre"
+    >
+
+    <button class="primary" onclick="guessNumber()">
+      Deviner
+    </button>
+
     <p id="numberResult"></p>
-    <button class="primary" onclick="showPage('games')">Retour aux jeux</button>
+
+    <button
+      class="primary"
+      onclick="showPage('games')"
+    >
+      Retour aux jeux
+    </button>
+
   </div>
+
 </section>
+
+
 <section id="ranking" class="page">
+
   <h2>🏆 Classement</h2>
-  <div class="panel"><table><thead><tr><th>#</th><th>Joueur</th><th>Points</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
+
+  <div class="panel">
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>#</th>
+          <th>Joueur</th>
+          <th>Points</th>
+        </tr>
+
+      </thead>
+
+      <tbody id="rankingBody"></tbody>
+
+    </table>
+
+  </div>
+
 </section>
+
 
 <section id="rewards" class="page">
+
   <h2>🎁 Récompenses</h2>
-  <p class="muted">Les récompenses sont configurées par l'administrateur. Cette version utilise uniquement des points.</p>
+
+  <p class="muted">
+    Les récompenses sont configurées par l'administrateur.
+    Cette version utilise uniquement des points.
+  </p>
+
   <div id="rewardGrid" class="grid"></div>
+
 </section>
+
 
 <section id="admin" class="page">
+
   <h2>⚙️ Espace administrateur</h2>
+
   <div class="admin-grid">
-    <div class="panel"><h3>Tableau de bord</h3><div class="admin-stats"><b id="aPlayers">1</b> joueurs <b id="aGames">0</b> jeux <b id="aPoints">0</b> points distribués</div></div>
+
+
     <div class="panel">
+
+      <h3>Tableau de bord</h3>
+
+      <div class="admin-stats">
+
+        <b id="aPlayers">1</b> joueurs
+
+        <b id="aGames">0</b> jeux
+
+        <b id="aPoints">0</b> points distribués
+
+      </div>
+
+    </div>
+
+
+    <div class="panel">
+
       <h3>Ajouter un jeu</h3>
-      <input id="newGameName" placeholder="Nom du jeu">
-      <input id="newGamePoints" type="number" placeholder="Points">
-      <button class="primary" onclick="addGame()">Ajouter</button>
+
+      <input
+        id="newGameName"
+        placeholder="Nom du jeu"
+      >
+
+      <input
+        id="newGamePoints"
+        type="number"
+        placeholder="Points"
+      >
+
+      <button
+        class="primary"
+        onclick="addGame()"
+      >
+        Ajouter
+      </button>
+
     </div>
+
+
     <div class="panel">
+
       <h3>Ajouter une récompense</h3>
-      <input id="newRewardName" placeholder="Nom de la récompense">
-      <input id="newRewardCost" type="number" placeholder="Coût en points">
-      <button class="primary" onclick="addReward()">Ajouter</button>
+
+      <input
+        id="newRewardName"
+        placeholder="Nom de la récompense"
+      >
+
+      <input
+        id="newRewardCost"
+        type="number"
+        placeholder="Coût en points"
+      >
+
+      <button
+        class="primary"
+        onclick="addReward()"
+      >
+        Ajouter
+      </button>
+
     </div>
+
+
+    <div class="panel">
+
+      <h2>📋 Demandes de récompenses</h2>
+
+      <div id="rewardRequests"></div>
+
+    </div>
+
+
   </div>
+
 </section>
+
 </main>
 
+
 <div id="loginModal" class="modal hidden">
- <div class="modalbox"><button class="close" onclick="closeLogin()">×</button><h2>Créer un profil</h2>
- <input id="username" placeholder="Ton pseudo"><button class="primary" onclick="login()">Continuer</button></div>
+
+  <div class="modalbox">
+
+    <button
+      class="close"
+      onclick="closeLogin()"
+    >
+      ×
+    </button>
+
+    <h2>Créer un profil</h2>
+
+    <input
+      id="username"
+      placeholder="Ton pseudo"
+    >
+
+    <button
+      class="primary"
+      onclick="login()"
+    >
+      Continuer
+    </button>
+
+  </div>
+
 </div>
+
+
 <script src="app.js?v=2"></script>
+
 </body>
 </html>
