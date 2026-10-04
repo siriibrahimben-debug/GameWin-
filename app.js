@@ -1,6 +1,6 @@
 /* =========================================================
    GAMEWIN — APP.JS
-   LUDO 3D CLASSIC
+   VERSION CORRIGÉE
 ========================================================= */
 
 const defaultGames = [
@@ -61,17 +61,10 @@ let secretNumber = 0;
 
 function save(){
 
-  localStorage.games =
-    JSON.stringify(games);
-
-  localStorage.rewards =
-    JSON.stringify(rewards);
-
-  localStorage.player =
-    JSON.stringify(player);
-
-  localStorage.rewardRequests =
-    JSON.stringify(rewardRequests);
+  localStorage.games = JSON.stringify(games);
+  localStorage.rewards = JSON.stringify(rewards);
+  localStorage.player = JSON.stringify(player);
+  localStorage.rewardRequests = JSON.stringify(rewardRequests);
 
   render();
 }
@@ -83,12 +76,9 @@ function save(){
 function showPage(id){
 
   document.querySelectorAll(".page")
-    .forEach(p =>
-      p.classList.remove("active")
-    );
+    .forEach(p => p.classList.remove("active"));
 
-  const page =
-    document.getElementById(id);
+  const page = document.getElementById(id);
 
   if(page){
     page.classList.add("active");
@@ -105,14 +95,12 @@ function showPage(id){
 
 function render(){
 
-  const userArea =
-    document.getElementById("userArea");
+  const userArea = document.getElementById("userArea");
 
   if(userArea){
 
     userArea.innerHTML = `
-      <button class="primary"
-        onclick="openLogin()">
+      <button class="primary" onclick="openLogin()">
         ${
           player.name === "Visiteur"
           ? "S'inscrire"
@@ -122,14 +110,9 @@ function render(){
     `;
   }
 
-  const statGames =
-    document.getElementById("statGames");
-
-  const statPlayers =
-    document.getElementById("statPlayers");
-
-  const statPoints =
-    document.getElementById("statPoints");
+  const statGames = document.getElementById("statGames");
+  const statPlayers = document.getElementById("statPlayers");
+  const statPoints = document.getElementById("statPoints");
 
   if(statGames)
     statGames.textContent = games.length;
@@ -140,14 +123,9 @@ function render(){
   if(statPoints)
     statPoints.textContent = player.points;
 
-  const aGames =
-    document.getElementById("aGames");
-
-  const aPlayers =
-    document.getElementById("aPlayers");
-
-  const aPoints =
-    document.getElementById("aPoints");
+  const aGames = document.getElementById("aGames");
+  const aPlayers = document.getElementById("aPlayers");
+  const aPoints = document.getElementById("aPoints");
 
   if(aGames)
     aGames.textContent = games.length;
@@ -158,8 +136,7 @@ function render(){
   if(aPoints)
     aPoints.textContent = player.points;
 
-  const gameGrid =
-    document.getElementById("gameGrid");
+  const gameGrid = document.getElementById("gameGrid");
 
   if(gameGrid){
 
@@ -219,8 +196,7 @@ function render(){
       `).join("");
   }
 
-  const rewardGrid =
-    document.getElementById("rewardGrid");
+  const rewardGrid = document.getElementById("rewardGrid");
 
   if(rewardGrid){
 
@@ -338,8 +314,7 @@ function render(){
 
 function openLogin(){
 
-  const modal =
-    document.getElementById("loginModal");
+  const modal = document.getElementById("loginModal");
 
   if(modal)
     modal.classList.remove("hidden");
@@ -347,8 +322,7 @@ function openLogin(){
 
 function closeLogin(){
 
-  const modal =
-    document.getElementById("loginModal");
+  const modal = document.getElementById("loginModal");
 
   if(modal)
     modal.classList.add("hidden");
@@ -356,13 +330,11 @@ function closeLogin(){
 
 function login(){
 
-  const input =
-    document.getElementById("username");
+  const input = document.getElementById("username");
 
   if(!input) return;
 
-  const name =
-    input.value.trim();
+  const name = input.value.trim();
 
   if(!name){
 
@@ -395,18 +367,12 @@ function nextQuestion(){
 
   if(qi >= questions.length){
 
-    const q =
-      document.getElementById("question");
-
-    const a =
-      document.getElementById("answers");
-
-    const r =
-      document.getElementById("quizResult");
+    const q = document.getElementById("question");
+    const a = document.getElementById("answers");
+    const r = document.getElementById("quizResult");
 
     if(q)
-      q.textContent =
-        "Quiz terminé 🎉";
+      q.textContent = "Quiz terminé 🎉";
 
     if(a)
       a.innerHTML = `
@@ -425,17 +391,10 @@ function nextQuestion(){
 
   const x = questions[qi];
 
-  const meta =
-    document.getElementById("quizMeta");
-
-  const q =
-    document.getElementById("question");
-
-  const r =
-    document.getElementById("quizResult");
-
-  const a =
-    document.getElementById("answers");
+  const meta = document.getElementById("quizMeta");
+  const q = document.getElementById("question");
+  const r = document.getElementById("quizResult");
+  const a = document.getElementById("answers");
 
   if(meta)
     meta.textContent =
@@ -719,13 +678,13 @@ function addReward(){
 }
 
 /* =========================================================
-   LUDO 3D — ÉTAT
+   FIN BLOC 1
+========================================================= *//* =========================================================
+   LUDO 3D CLASSIC
 ========================================================= */
 
 let ludoState = null;
-
 let ludoPlayersCount = 4;
-
 let ludoHumanColor = "green";
 
 const LUDO_COLORS = {
@@ -756,49 +715,69 @@ const LUDO_COLORS = {
 
 };
 
+/*
+  Parcours circulaire de 52 cases.
+*/
+
 const LUDO_PATH = [
 
-  [6,0],[6,1],[6,2],[6,3],[6,4],
-  [5,4],[4,4],[3,4],[2,4],[1,4],
-  [0,4],[0,5],[0,6],[0,7],[0,8],
-  [1,8],[2,8],[3,8],[4,8],[5,8],
-  [6,8],[6,9],[6,10],[6,11],[6,12],
-  [6,13],[6,14],[7,14],[8,14],
-  [8,13],[8,12],[8,11],[8,10],[8,9],
-  [8,8],[9,8],[10,8],[11,8],[12,8],
-  [13,8],[14,8],[14,7],[14,6],[14,5],
-  [14,4],[13,4],[12,4],[11,4],[10,4],
-  [9,4],[8,4],[8,3],[8,2],[8,1],
-  [8,0],[7,0]
+  [0,0],[0,1],[0,2],[0,3],[0,4],
+  [0,5],[0,6],[0,7],[0,8],[0,9],
+  [0,10],[0,11],[0,12],[0,13],
+
+  [1,13],[2,13],[3,13],[4,13],
+  [5,13],[6,13],[7,13],[8,13],
+  [9,13],[10,13],[11,13],[12,13],
+  [13,13],
+
+  [13,12],[13,11],[13,10],[13,9],
+  [13,8],[13,7],[13,6],[13,5],
+  [13,4],[13,3],[13,2],[13,1],
+  [13,0],
+
+  [12,0],[11,0],[10,0],[9,0],
+  [8,0],[7,0],[6,0],[5,0],
+  [4,0],[3,0],[2,0],[1,0]
 ];
 
 const LUDO_SAFE = [
   0,8,13,21,26,34,39,47
 ];
 
-const LUDO_HOMES = {
+const LUDO_HOME_SPOTS = {
 
   red:[
-    [1,1],[1,4],[4,1],[4,4]
+    [2,2],
+    [2,4],
+    [4,2],
+    [4,4]
   ],
 
   green:[
-    [1,10],[1,13],[4,10],[4,13]
-  ],
-
-  blue:[
-    [10,1],[10,4],[13,1],[13,4]
+    [2,9],
+    [2,11],
+    [4,9],
+    [4,11]
   ],
 
   yellow:[
-    [10,10],[10,13],[13,10],[13,13]
+    [9,9],
+    [9,11],
+    [11,9],
+    [11,11]
+  ],
+
+  blue:[
+    [9,2],
+    [9,4],
+    [11,2],
+    [11,4]
   ]
+
 };
 
-const LUDO_LANES = {
-
 /* =========================================================
-   LUDO 3D STYLE
+   STYLE 3D
 ========================================================= */
 
 function installLudo3DStyle(){
@@ -813,914 +792,952 @@ function installLudo3DStyle(){
 
   style.textContent = `
 
-  #ludoGame{
-    width:100%;
-    min-height:100vh;
-    background:
-      radial-gradient(
-        circle at 50% 20%,
-        #183963 0%,
-        #07172d 55%,
-        #030b18 100%
-      );
-    perspective:1200px;
-  }
-
-  .l3d{
-    max-width:700px;
-    margin:auto;
-    padding:15px 10px 35px;
-    color:#fff;
-  }
-
-  .l3d-title{
-    text-align:center;
-    font-size:30px;
-    font-weight:1000;
-    margin:8px 0 5px;
-    text-shadow:
-      0 3px 0 #000,
-      0 6px 15px #0009;
-  }
-
-  .l3d-sub{
-    text-align:center;
-    color:#cbdcff;
-    margin-bottom:18px;
-  }
-
-  .l3d-panel{
-    background:
-      linear-gradient(
-        145deg,
-        #19395e,
-        #081a32
-      );
-    border:2px solid #345c8b;
-    border-radius:25px;
-    padding:20px;
-    box-shadow:
-      0 18px 35px #0009,
-      inset 0 1px 0 #ffffff18;
-  }
-
-  .l3d-mode{
-    text-align:center;
-    color:#ffd21c;
-    font-size:25px;
-    font-weight:1000;
-    text-shadow:0 3px 5px #000;
-  }
-
-  .l3d-choice{
-    text-align:center;
-    margin:15px 0 9px;
-    font-weight:800;
-  }
-
-  .l3d-buttons{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:8px;
-  }
-
-  .l3d-buttons button{
-    border:2px solid #52739b;
-    border-radius:12px;
-    padding:13px 5px;
-    background:#102b4d;
-    color:#fff;
-    font-weight:900;
-  }
-
-  .l3d-buttons button.active{
-    background:#ffd21c;
-    color:#07162c;
-    border-color:#ffd21c;
-    box-shadow:0 5px 12px #0008;
-  }
-
-  .l3d-input{
-    width:100%;
-    box-sizing:border-box;
-    padding:14px;
-    margin-top:10px;
-    border-radius:12px;
-    border:2px solid #4a6d97;
-    background:#071a31;
-    color:#fff;
-    font-size:16px;
-  }
-
-  .l3d-colors{
-    display:flex;
-    justify-content:center;
-    gap:13px;
-    margin:15px 0;
-  }
-
-  .l3d-color{
-    width:54px;
-    height:54px;
-    border-radius:50%;
-    border:3px solid transparent;
-    font-size:27px;
-    background:#142e50;
-    box-shadow:0 6px 10px #0008;
-  }
-
-  .l3d-color.active{
-    border-color:#fff;
-    transform:translateY(-4px) scale(1.1);
-  }
-
-  .l3d-play{
-    width:100%;
-    padding:17px;
-    border:0;
-    border-radius:16px;
-    background:linear-gradient(
-      #ffe15a,
-      #f4bc00
-    );
-    color:#101c2d;
-    font-size:21px;
-    font-weight:1000;
-    box-shadow:
-      0 7px 0 #9b7200,
-      0 12px 20px #0008;
-  }
-
-  .l3d-board-wrap{
-    padding:9px;
-    border-radius:24px;
-    background:
-      linear-gradient(
-        145deg,
-        #426991,
-        #081a30
-      );
-    box-shadow:
-      0 22px 30px #000b,
-      inset 0 2px 3px #ffffff30;
-    transform:
-      rotateX(3deg);
-    transform-style:preserve-3d;
-  }
-
-  #ludoBoard3D{
-    position:relative;
-    width:100%;
-    aspect-ratio:1;
-    display:grid;
-    grid-template-columns:repeat(15,1fr);
-    grid-template-rows:repeat(15,1fr);
-    gap:2px;
-    padding:3px;
-    box-sizing:border-box;
-    border-radius:17px;
-    overflow:hidden;
-    background:#122b49;
-    box-shadow:
-      inset 0 0 15px #0009;
-  }
-
-  .l3d-cell{
-    position:relative;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:3px;
-    box-shadow:
-      inset 1px 1px 0 #ffffff70,
-      inset -2px -2px 3px #0004;
-  }
-
-  .l3d-empty{
-    background:#102743;
-  }
-
-  .l3d-track{
-    background:
-      linear-gradient(
-        145deg,
-        #ffffff,
-        #cdd4dc
-      );
-  }
-
-  .l3d-red{
-    background:
-      linear-gradient(
-        145deg,
-        #ff4a42,
-        #c9140f
-      );
-  }
-
-  .l3d-green{
-    background:
-      linear-gradient(
-        145deg,
-        #45ec98,
-        #07924d
-      );
-  }
-
-  .l3d-yellow{
-    background:
-      linear-gradient(
-        145deg,
-        #ffe96a,
-        #e2a900
-      );
-  }
-
-  .l3d-blue{
-    background:
-      linear-gradient(
-        145deg,
-        #58aaff,
-        #1262b5
-      );
-  }
-
-  .l3d-lane-red{
-    background:#f56d69;
-  }
-
-  .l3d-lane-green{
-    background:#52d99a;
-  }
-
-  .l3d-lane-yellow{
-    background:#ffe374;
-  }
-
-  .l3d-lane-blue{
-    background:#71b8f2;
-  }
-
-  .l3d-center{
-    background:
-      conic-gradient(
-        #ef2b24 0 25%,
-        #ffd72d 25% 50%,
-        #2985df 50% 75%,
-        #20c978 75% 100%
-      );
-  }
-
-  .l3d-star{
-    color:#ffd21c;
-    font-size:clamp(10px,3.5vw,23px);
-    text-shadow:
-      0 2px 2px #0009;
-  }
-
-  .l3d-pawn{
-    width:70%;
-    height:70%;
-    max-width:34px;
-    max-height:34px;
-    border-radius:50%;
-    position:relative;
-    z-index:10;
-    border:2px solid #fff;
-    box-shadow:
-      inset 4px 4px 5px #ffffff66,
-      inset -5px -6px 7px #0007,
-      0 5px 6px #0009;
-    transform:
-      translateZ(15px);
-  }
-
-  .l3d-pawn:before{
-    content:"";
-    position:absolute;
-    width:42%;
-    height:24%;
-    left:15%;
-    top:12%;
-    border-radius:50%;
-    background:#ffffff80;
-    filter:blur(1px);
-  }
-
-  .l3d-pawn.red{
-    background:
-      radial-gradient(
-        circle at 35% 25%,
-        #ff9b96,
-        #ee2821 45%,
-        #970b08
-      );
-  }
-
-  .l3d-pawn.green{
-    background:
-      radial-gradient(
-        circle at 35% 25%,
-        #baffd8,
-        #16d875 45%,
-        #06783d
-      );
-  }
-
-  .l3d-pawn.yellow{
-    background:
-      radial-gradient(
-        circle at 35% 25%,
-        #fff9bd,
-        #ffd322 45%,
-        #a87800
-      );
-  }
-
-  .l3d-pawn.blue{
-    background:
-      radial-gradient(
-        circle at 35% 25%,
-        #c7e4ff,
-        #2188eb 45%,
-        #074d99
-      );
-  }
-
-  .l3d-pawn.movable{
-    animation:
-      pawn3dPulse .7s infinite;
-    cursor:pointer;
-  }
-
-  @keyframes pawn3dPulse{
-    50%{
-      transform:
-        translateZ(25px)
-        scale(1.22);
-      filter:brightness(1.3);
+    #ludoGame{
+      min-height:100vh;
+      padding:12px 8px 40px;
+      box-sizing:border-box;
+      background:
+        radial-gradient(
+          circle at 50% 10%,
+          #294f7b,
+          #0a1d35 50%,
+          #020812
+        );
+      color:white;
+      overflow-x:hidden;
     }
-  }
 
-  .l3d-info{
-    margin-top:15px;
-    padding:18px;
-    border-radius:24px;
-    b/* =========================================================
-   PLATEAU LUDO 3D
-========================================================= */
-
-function drawLudo3DBoard(){
-
-  const board =
-    document.getElementById("ludoBoard3D");
-
-  if(!board) return;
-
-  board.innerHTML = "";
-
-  const cells = [];
-
-  /* Création des 225 cases */
-
-  for(let r=0;r<15;r++){
-
-    for(let c=0;c<15;c++){
-
-      const cell =
-        document.createElement("div");
-
-      cell.className =
-        "l3d-cell l3d-empty";
-
-      cell.dataset.row = r;
-      cell.dataset.col = c;
-
-      cells.push(cell);
-
-      board.appendChild(cell);
+    .l3d{
+      width:100%;
+      max-width:720px;
+      margin:auto;
     }
-  }
 
-  /* =====================================================
-     MAISONS
-  ===================================================== */
-
-  cells.forEach(cell => {
-
-    const r =
-      Number(cell.dataset.row);
-
-    const c =
-      Number(cell.dataset.col);
-
-    if(r <= 5 && c <= 5){
-
-      cell.className =
-        "l3d-cell l3d-red";
-
-    }else if(r <= 5 && c >= 9){
-
-      cell.className =
-        "l3d-cell l3d-green";
-
-    }else if(r >= 9 && c <= 5){
-
-      cell.className =
-        "l3d-cell l3d-blue";
-
-    }else if(r >= 9 && c >= 9){
-
-      cell.className =
-        "l3d-cell l3d-yellow";
+    .l3d-title{
+      text-align:center;
+      font-size:30px;
+      font-weight:900;
+      margin:8px 0 4px;
+      text-shadow:
+        0 3px 0 #000,
+        0 7px 14px #0009;
     }
-  });
 
-  /* =====================================================
-     PARCOURS
-  ===================================================== */
-
-  LUDO_PATH.forEach((pos,index) => {
-
-    const r = pos[0];
-    const c = pos[1];
-
-    const cell =
-      cells[r*15+c];
-
-    cell.className =
-      "l3d-cell l3d-track";
-
-    /*
-      Cases de départ colorées
-    */
-
-    if(index === 0)
-      cell.classList.add("l3d-red");
-
-    if(index === 13)
-      cell.classList.add("l3d-green");
-
-    if(index === 26)
-      cell.classList.add("l3d-yellow");
-
-    if(index === 39)
-      cell.classList.add("l3d-blue");
-
-    /*
-      Étoiles
-    */
-
-    if(LUDO_SAFE.includes(index)){
-
-      const star =
-        document.createElement("span");
-
-      star.className =
-        "l3d-star";
-
-      star.textContent = "★";
-
-      cell.appendChild(star);
+    .l3d-sub{
+      text-align:center;
+      color:#c8d9ef;
+      margin-bottom:14px;
     }
-  });
 
-  /* =====================================================
-     COULOIRS FINAUX
-  ===================================================== */
-
-  Object.entries(LUDO_LANES)
-    .forEach(([color,positions]) => {
-
-      positions.forEach(pos => {
-
-        const r = pos[0];
-        const c = pos[1];
-
-        const cell =
-          cells[r*15+c];
-
-        cell.className =
-          "l3d-cell l3d-lane-" + color;
-      });
-    });
-
-  /* =====================================================
-     CENTRE 3D
-  ===================================================== */
-
-  for(let r=6;r<=8;r++){
-
-    for(let c=6;c<=8;c++){
-
-      const cell =
-        cells[r*15+c];
-
-      cell.className =
-        "l3d-cell l3d-center";
+    .l3d-panel{
+      background:
+        linear-gradient(
+          145deg,
+          #183b62,
+          #07162a
+        );
+      border:2px solid #315b88;
+      border-radius:22px;
+      padding:12px;
+      box-shadow:
+        0 18px 35px #0009,
+        inset 0 1px #ffffff22;
     }
-  }
 
-  /*
-    On ajoute les pions.
-  */
-
-  ludoState.players.forEach(
-    (p,playerIndex) => {
-
-      p.pawns.forEach(
-        (position,pawnIndex) => {
-
-          if(position === -1){
-
-            const home =
-              LUDO_HOMES[p.key][pawnIndex];
-
-            const cell =
-              cells[
-                home[0]*15+home[1]
-              ];
-
-            addLudoPawn3D(
-              cell,
-              p,
-              playerIndex,
-              pawnIndex,
-              true
-            );
-          }
-
-          else if(
-            position >= 0 &&
-            position < 52
-          ){
-
-            const global =
-              (
-                p.start + position
-              ) % 52;
-
-            const path =
-              LUDO_PATH[global];
-
-            const cell =
-              cells[
-                path[0]*15+path[1]
-              ];
-
-            addLudoPawn3D(
-              cell,
-              p,
-              playerIndex,
-              pawnIndex,
-              false
-            );
-          }
-
-          else if(
-            position >= 52 &&
-            position <= 55
-          ){
-
-            const lane =
-              LUDO_LANES[p.key][
-                position-52
-              ];
-
-            const cell =
-              cells[
-                lane[0]*15+lane[1]
-              ];
-
-            addLudoPawn3D(
-              cell,
-              p,
-              playerIndex,
-              pawnIndex,
-              false
-            );
-          }
-
-        }
-      );
+    .l3d-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
     }
-  );
+
+    .l3d-turn{
+      font-weight:900;
+      font-size:17px;
+    }
+
+    .l3d-dice{
+      width:62px;
+      height:62px;
+      flex-shrink:0;
+      border-radius:17px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:40px;
+      background:
+        linear-gradient(
+          145deg,
+          #ffffff,
+          #c5ced9
+        );
+      color:#111;
+      box-shadow:
+        0 6px 0 #687585,
+        0 12px 20px #0009;
+      cursor:pointer;
+      transition:.15s;
+    }
+
+    .l3d-dice:active{
+      transform:translateY(5px);
+      box-shadow:
+        0 2px 0 #687585,
+        0 6px 12px #0009;
+    }
+
+    .l3d-dice.rolling{
+      animation:ludoDiceRoll .35s infinite;
+    }
+
+    @keyframes ludoDiceRoll{
+      0%{transform:rotate(0) scale(1)}
+      25%{transform:rotate(-12deg) scale(1.08)}
+      50%{transform:rotate(12deg) scale(.96)}
+      75%{transform:rotate(-8deg) scale(1.05)}
+      100%{transform:rotate(0) scale(1)}
+    }
+
+    .l3d-board-wrap{
+      width:100%;
+      padding:7px;
+      box-sizing:border-box;
+      border-radius:22px;
+      background:
+        linear-gradient(
+          145deg,
+          #42688f,
+          #07182d
+        );
+      box-shadow:
+        0 18px 28px #000b,
+        inset 0 2px 4px #ffffff35;
+    }
+
+    #ludoBoard3D{
+      position:relative;
+      width:100%;
+      aspect-ratio:1;
+      display:grid;
+      grid-template-columns:repeat(14,1fr);
+      grid-template-rows:repeat(14,1fr);
+      gap:2px;
+      padding:4px;
+      box-sizing:border-box;
+      border-radius:16px;
+      overflow:hidden;
+      background:#091a2d;
+      box-shadow:
+        inset 0 0 18px #000b;
+    }
+
+    .l3d-cell{
+      position:relative;
+      min-width:0;
+      min-height:0;
+      border-radius:3px;
+      box-shadow:
+        inset 1px 1px 0 #ffffff70,
+        inset -2px -2px 3px #0004;
+    }
+
+    .l3d-empty{
+      background:#112944;
+    }
+
+    .l3d-track{
+      background:
+        linear-gradient(
+          145deg,
+          #ffffff,
+          #ccd5df
+        );
+    }
+
+    .l3d-safe{
+      background:
+        linear-gradient(
+          145deg,
+          #ffffff,
+          #d4dce5
+        );
+    }
+
+    .l3d-safe::after{
+      content:"★";
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      color:#687687;
+      font-size:clamp(9px,2.5vw,19px);
+    }
+
+    .l3d-red-home{
+      background:
+        linear-gradient(
+          145deg,
+          #ff625b,
+          #b9130e
+        );
+    }
+
+    .l3d-green-home{
+      background:
+        linear-gradient(
+          145deg,
+          #58ef9a,
+          #07914b
+        );
+    }
+
+    .l3d-yellow-home{
+      background:
+        linear-gradient(
+          145deg,
+          #fff16a,
+          #d3a300
+        );
+    }
+
+    .l3d-blue-home{
+      background:
+        linear-gradient(
+          145deg,
+          #66aeff,
+          #1762bd
+        );
+    }
+
+    .l3d-lane-red{
+      background:#ef7770;
+    }
+
+    .l3d-lane-green{
+      background:#62d99b;
+    }
+
+    .l3d-lane-yellow{
+      background:#ffe57a;
+    }
+
+    .l3d-lane-blue{
+      background:#76b6ee;
+    }
+
+    .l3d-center{
+      background:
+        conic-gradient(
+          #e53935 0 25%,
+          #ffd21f 25% 50%,
+          #2f80ed 50% 75%,
+          #20c96b 75% 100%
+        );
+    }
+
+    .l3d-pawn{
+      position:absolute;
+      z-index:20;
+      width:76%;
+      height:76%;
+      left:12%;
+      top:12%;
+      border-radius:50%;
+      border:2px solid #fff;
+      box-sizing:border-box;
+      box-shadow:
+        inset 4px 4px 5px #ffffff66,
+        inset -5px -6px 7px #0008,
+        0 5px 7px #000b;
+      cursor:pointer;
+      transition:.15s;
+    }
+
+    .l3d-pawn::before{
+      content:"";
+      position:absolute;
+      width:38%;
+      height:22%;
+      left:16%;
+      top:12%;
+      border-radius:50%;
+      background:#ffffff88;
+    }
+
+    .l3d-pawn.red{
+      background:
+        radial-gradient(
+          circle at 35% 25%,
+          #ffaaa5,
+          #ed3028 45%,
+          #920b07
+        );
+    }
+
+    .l3d-pawn.green{
+      background:
+        radial-gradient(
+          circle at 35% 25%,
+          #b9ffda,
+          #16d875 45%,
+          #06783d
+        );
+    }
+
+    .l3d-pawn.yellow{
+      background:
+        radial-gradient(
+          circle at 35% 25%,
+          #fffbc2,
+          #ffd322 45%,
+          #a87800
+        );
+    }
+
+    .l3d-pawn.blue{
+      background:
+        radial-gradient(
+          circle at 35% 25%,
+          #c8e5ff,
+          #2188eb 45%,
+          #074d99
+        );
+    }
+
+    .l3d-pawn.movable{
+      animation:ludoPawnPulse .7s infinite;
+    }
+
+    @keyframes ludoPawnPulse{
+      50%{
+        transform:scale(1.22);
+        filter:brightness(1.35);
+      }
+    }
+
+    .l3d-info{
+      text-align:center;
+      min-height:24px;
+      padding:9px 4px;
+      color:#e7f0ff;
+      font-weight:800;
+    }
+
+    .l3d-actions{
+      display:flex;
+      justify-content:center;
+      gap:9px;
+      flex-wrap:wrap;
+    }
+
+    .l3d-btn{
+      border:0;
+      border-radius:13px;
+      padding:12px 17px;
+      font-weight:900;
+      cursor:pointer;
+      background:
+        linear-gradient(
+          #ffe15a,
+          #eab600
+        );
+      color:#101b2d;
+      box-shadow:
+        0 5px 0 #967200,
+        0 9px 15px #0007;
+    }
+
+    .l3d-btn.secondary{
+      background:#f2f5f8;
+      color:#122039;
+      box-shadow:
+        0 5px 0 #8c99a8,
+        0 9px 15px #0007;
+    }
+
+    .l3d-btn:active{
+      transform:translateY(4px);
+      box-shadow:0 1px 0 #777;
+    }
+
+    .l3d-setup{
+      background:
+        linear-gradient(
+          145deg,
+          #183b62,
+          #07172c
+        );
+      border:2px solid #315b88;
+      border-radius:22px;
+      padding:22px;
+      text-align:center;
+      box-shadow:0 18px 35px #0009;
+    }
+
+    .l3d-choice{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:8px;
+      margin:12px 0 18px;
+    }
+
+    .l3d-choice button{
+      border:2px solid #4b6b91;
+      border-radius:12px;
+      padding:11px 15px;
+      background:#102a49;
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .l3d-choice button.active{
+      background:#ffd21f;
+      color:#111d2d;
+      border-color:#ffd21f;
+      box-shadow:0 5px 10px #0007;
+    }
+
+    .l3d-name{
+      width:100%;
+      box-sizing:border-box;
+      border:2px solid #496b93;
+      border-radius:12px;
+      padding:13px;
+      margin:8px 0 12px;
+      background:#071a30;
+      color:white;
+      font-size:16px;
+    }
+
+    .l3d-winner{
+      text-align:center;
+      padding:15px;
+      margin-top:10px;
+      border-radius:15px;
+      background:#f4c842;
+      color:#111b2c;
+      font-size:20px;
+      font-weight:1000;
+    }
+
+    @media(max-width:420px){
+
+      .l3d-panel{
+        padding:8px;
+      }
+
+      .l3d-title{
+        font-size:25px;
+      }
+
+      .l3d-turn{
+        font-size:14px;
+      }
+
+      .l3d-dice{
+        width:54px;
+        height:54px;
+        font-size:34px;
+      }
+
+    }
+
+  `;
+
+  document.head.appendChild(style);
 }
 
 /* =========================================================
-   COULOIRS
+   CRÉATION DE LA PARTIE
 ========================================================= */
 
-function LUDO_LANES(){
+function ludoCreateState(){
 
-  return {
+  const allColors =
+    ["red","green","yellow","blue"];
 
-    red:[
-      [1,7],
-      [2,7],
-      [3,7],
-      [4,7],
-      [5,7]
-    ],
+  let colors =
+    allColors.slice(0,ludoPlayersCount);
 
-    green:[
-      [7,1],
-      [7,2],
-      [7,3],
-      [7,4],
-      [7,5]
-    ],
+  /*
+    La couleur choisie par le joueur
+    est toujours présente.
+  */
 
-    yellow:[
-      [7,13],
-      [7,12],
-      [7,11],
-      [7,10],
-      [7,9]
-    ],
+  if(!colors.includes(ludoHumanColor)){
 
-    blue:[
-      [13,7],
-      [12,7],
-      [11,7],
-      [10,7],
-      [9,7]
-    ]
+    colors[0] = ludoHumanColor;
+  }
+
+  ludoState = {
+
+    players:colors.map(
+      (color,index) => ({
+
+        color:color,
+
+        name:
+          color === ludoHumanColor
+          ? (
+              player.name === "Visiteur"
+              ? "Joueur"
+              : player.name
+            )
+          : "CPU " + (index+1),
+
+        human:
+          color === ludoHumanColor,
+
+        tokens:[
+          -1,
+          -1,
+          -1,
+          -1
+        ]
+
+      })
+    ),
+
+    turn:0,
+
+    dice:0,
+
+    rolling:false,
+
+    winner:null,
+
+    message:"Lance le dé pour commencer !"
+
   };
 }
 
 /* =========================================================
-   PION 3D
+   ÉCRAN DE CONFIGURATION
 ========================================================= */
 
-function addLudoPawn3D(
-  cell,
-  p,
-  playerIndex,
-  pawnIndex,
-  inHome
-){
+function ludoSetupHTML(){
 
-  const pawn =
-    document.createElement("div");
+  let html = `
 
-  pawn.className =
-    "l3d-pawn " + p.key;
+    <div class="l3d-setup">
 
-  /*
-    Le pion devient lumineux lorsqu'il
-    peut être joué.
-  */
+      <div class="l3d-title">
+        🎲 LUDO 3D
+      </div>
 
-  if(
-    ludoState.rolled &&
-    ludoState.turn === playerIndex &&
-    p.human &&
-    canLudoPawnMove(
-      playerIndex,
-      pawnIndex
-    )
-  ){
+      <p class="l3d-sub">
+        Mode classique
+      </p>
 
-    pawn.classList.add("movable");
+      <strong>
+        Nombre de joueurs
+      </strong>
 
-    pawn.onclick = function(){
+      <div class="l3d-choice">
+  `;
 
-      ludoMovePawn3D(
-        pawnIndex
-      );
-    };
-  }
+  [2,3,4].forEach(n => {
 
-  cell.appendChild(pawn);
+    html += `
+
+      <button
+        class="${ludoPlayersCount === n ? "active" : ""}"
+        onclick="ludoPlayersCount=${n};renderLudo()">
+
+        ${n} joueurs
+
+      </button>
+
+    `;
+
+  });
+
+  html += `
+
+      </div>
+
+      <strong>
+        Choisis ta couleur
+      </strong>
+
+      <div class="l3d-choice">
+  `;
+
+  Object.keys(LUDO_COLORS)
+    .forEach(color => {
+
+      html += `
+
+        <button
+          class="${ludoHumanColor === color ? "active" : ""}"
+          onclick="ludoHumanColor='${color}';renderLudo()">
+
+          ${LUDO_COLORS[color].icon}
+          ${LUDO_COLORS[color].name}
+
+        </button>
+
+      `;
+
+    });
+
+  html += `
+
+      </div>
+
+      <input
+        id="ludoPlayerName"
+        class="l3d-name"
+        placeholder="Ton nom (optionnel)"
+        value="${
+          player.name === "Visiteur"
+          ? ""
+          : player.name
+        }"
+      >
+
+      <button
+        class="l3d-btn"
+        onclick="startLudoGame()">
+
+        ▶ Commencer la partie
+
+      </button>
+
+    </div>
+
+  `;
+
+  return html;
 }
 
 /* =========================================================
-   DÉ 3D
+   START LUDO
 ========================================================= */
 
-function ludoRoll3D(){
+function startLudo(){
+
+  installLudo3DStyle();
+
+  ludoState = null;
+
+  showPage("ludoGame");
+
+  renderLudo();
+}
+
+function startLudoGame(){
+
+  const input =
+    document.getElementById("ludoPlayerName");
+
+  if(input){
+
+    const name =
+      input.value.trim();
+
+    if(name){
+
+      player.name = name;
+
+      localStorage.player =
+        JSON.stringify(player);
+    }
+  }
+
+  ludoCreateState();
+
+  renderLudo();
+}
+
+/* =========================================================
+   FIN BLOC 2
+========================================================= *//* =========================================================
+   LUDO — FONCTIONS DE JEU
+========================================================= */
+
+function ludoCurrentPlayer(){
+
+  if(!ludoState)
+    return null;
+
+  return ludoState.players[
+    ludoState.turn
+  ];
+}
+
+function ludoAbsolutePosition(
+  playerData,
+  position
+){
+
+  return (
+    LUDO_COLORS[playerData.color].start +
+    position
+  ) % 52;
+}
+
+/* =========================================================
+   PIONS JOUABLES
+========================================================= */
+
+function ludoMovableTokens(
+  playerData,
+  dice
+){
+
+  const result = [];
+
+  if(!playerData || !dice)
+    return result;
+
+  playerData.tokens.forEach(
+    (position,index) => {
+
+      /*
+        Maison → sortie avec 6.
+      */
+
+      if(position === -1){
+
+        if(dice === 6)
+          result.push(index);
+
+        return;
+      }
+
+      /*
+        Arrivée exacte.
+      */
+
+      if(position + dice <= 52){
+
+        result.push(index);
+      }
+
+    }
+  );
+
+  return result;
+}
+
+/* =========================================================
+   LANCER DU DÉ
+========================================================= */
+
+function ludoRoll(){
 
   if(!ludoState)
     return;
 
-  if(ludoState.rolled)
+  if(ludoState.winner)
+    return;
+
+  if(ludoState.rolling)
     return;
 
   const current =
-    ludoState.players[
-      ludoState.turn
-    ];
+    ludoCurrentPlayer();
+
+  if(!current)
+    return;
 
   /*
-    Le bouton est réservé au joueur humain.
+    Le joueur humain lance
+    uniquement pendant son tour.
   */
 
   if(!current.human)
     return;
 
-  const die =
-    Math.floor(
-      Math.random()*6
-    ) + 1;
+  ludoState.rolling = true;
 
-  ludoState.dice = die;
+  let count = 0;
 
-  ludoState.rolled = true;
+  const faces = [
+    "",
+    "⚀",
+    "⚁",
+    "⚂",
+    "⚃",
+    "⚄",
+    "⚅"
+  ];
 
-  ludoState.message =
-    "Choisis un pion possible.";
+  const animation =
+    setInterval(() => {
 
-  /*
-    Animation du dé.
-  */
+      ludoState.dice =
+        1 +
+        Math.floor(
+          Math.random()*6
+        );
 
-  renderLudo();
+      renderLudo();
 
-  setTimeout(() => {
+      const die =
+        document.getElementById("ludoDie");
 
-    const dieElement =
-      document.getElementById("ludoDie");
+      if(die)
+        die.classList.add("rolling");
 
-    if(dieElement)
-      dieElement.classList.add(
-        "rolling"
-      );
+      count++;
 
-  },30);
+      if(count >= 9){
 
-  /*
-    Vérification des déplacements.
-  */
+        clearInterval(animation);
 
-  const possible =
-    current.pawns.some(
-      (_,i) =>
-        canLudoPawnMove(
-          ludoState.turn,
-          i
-        )
-    );
+        ludoState.rolling = false;
 
-  if(!possible){
+        const playerData =
+          ludoCurrentPlayer();
 
-    ludoState.message =
-      die === 6
-      ? "Aucun mouvement. Tu rejoues."
-      : "Aucun mouvement possible.";
+        const possible =
+          ludoMovableTokens(
+            playerData,
+            ludoState.dice
+          );
 
-    renderLudo();
+        if(!possible.length){
 
-    setTimeout(() => {
+          const rolled =
+            ludoState.dice;
 
-      if(die === 6){
+          ludoState.message =
+            "Aucun pion ne peut avancer.";
 
-        ludoState.rolled = false;
+          renderLudo();
 
-        ludoState.dice = 0;
+          setTimeout(() => {
 
-        ludoState.message =
-          "🎲 Tu rejoues !";
+            ludoState.dice = 0;
 
-        renderLudo();
+            if(rolled === 6){
 
-      }else{
+              ludoState.message =
+                "🎲 Tu rejoues !";
 
-        ludoNextTurn3D();
+              renderLudo();
+
+            }else{
+
+              ludoNextTurn();
+
+            }
+
+          },800);
+
+        }else{
+
+          ludoState.message =
+            possible.length === 1
+            ? "Clique sur ton pion possible."
+            : "Choisis le pion à déplacer.";
+
+          renderLudo();
+
+        }
+
       }
 
-    },1100);
-  }
+    },90);
 }
 
 /* =========================================================
-   RÈGLES DE DÉPLACEMENT
+   DÉPLACEMENT D'UN PION
 ========================================================= */
 
-function canLudoPawnMove(
-  playerIndex,
-  pawnIndex
-){
-
-  if(!ludoState)
-    return false;
-
-  const p =
-    ludoState.players[playerIndex];
-
-  const position =
-    p.pawns[pawnIndex];
-
-  const die =
-    ludoState.dice;
-
-  if(!die)
-    return false;
-
-  /*
-    Pion dans la maison :
-    sortie uniquement avec 6.
-  */
-
-  if(position === -1){
-
-    return die === 6;
-  }
-
-  /*
-    Arrivée exacte.
-  */
-
-  return position + die <= 56;
-}
-
-/* =========================================================
-   DÉPLACEMENT HUMAIN
-========================================================= */
-
-function ludoMovePawn3D(
-  pawnIndex
-){
+function ludoMoveToken(index){
 
   if(!ludoState)
     return;
 
-  const playerIndex =
-    ludoState.turn;
-
-  const p =
-    ludoState.players[playerIndex];
-
-  if(!p.human)
+  if(ludoState.winner)
     return;
 
-  if(
-    !canLudoPawnMove(
-      playerIndex,
-      pawnIndex
-    )
-  ){
-
+  if(ludoState.rolling)
     return;
-  }
 
-  const die =
+  const current =
+    ludoCurrentPlayer();
+
+  if(!current)
+    return;
+
+  if(!current.human)
+    return;
+
+  const dice =
     ludoState.dice;
+
+  const possible =
+    ludoMovableTokens(
+      current,
+      dice
+    );
+
+  if(!possible.includes(index))
+    return;
+
+  const oldPosition =
+    current.tokens[index];
 
   /*
     Sortie de maison.
   */
 
-  if(p.pawns[pawnIndex] === -1){
+  if(oldPosition === -1){
 
-    p.pawns[pawnIndex] = 0;
+    current.tokens[index] = 0;
 
   }else{
 
-    p.pawns[pawnIndex] += die;
+    current.tokens[index] += dice;
+
   }
 
   /*
     Capture.
   */
 
-  ludoCapture3D(
-    playerIndex,
-    pawnIndex
+  ludoCapture(
+    current,
+    index
   );
 
   /*
-    Arrivée.
+    Vérification victoire.
   */
 
   if(
-    p.pawns[pawnIndex] === 56
+    current.tokens.every(
+      position => position === 52
+    )
   ){
 
-    p.finished++;
+    ludoState.winner =
+      current;
 
-    if(p.finished >= 4){
+    ludoState.message =
+      "🏆 Tu as gagné !";
 
-      ludoState.winner =
-        playerIndex;
+    player.points += 100;
 
-      player.points += 100;
+    save();
 
-      save();
+    renderLudo();
 
-      renderLudo();
-
-      return;
-    }
+    return;
   }
 
-  ludoState.rolled = false;
-
   /*
-    Un 6 donne un tour supplémentaire.
+    Un 6 = tour supplémentaire.
   */
 
-  if(die === 6){
+  if(dice === 6){
 
     ludoState.dice = 0;
 
@@ -1731,27 +1748,26 @@ function ludoMovePawn3D(
 
   }else{
 
-    ludoNextTurn3D();
+    ludoNextTurn();
+
   }
 }
 
 /* =========================================================
-   CAPTURE DES PIONS
+   CAPTURE
 ========================================================= */
 
-function ludoCapture3D(
-  playerIndex,
-  pawnIndex
+function ludoCapture(
+  movingPlayer,
+  tokenIndex
 ){
 
-  const p =
-    ludoState.players[playerIndex];
-
   const position =
-    p.pawns[pawnIndex];
+    movingPlayer.tokens[tokenIndex];
 
   /*
-    Pas de capture dans le couloir final.
+    Maison ou arrivée :
+    pas de capture.
   */
 
   if(
@@ -1762,24 +1778,35 @@ function ludoCapture3D(
     return;
   }
 
-  const global =
-    (p.start + position) % 52;
+  const absolute =
+    ludoAbsolutePosition(
+      movingPlayer,
+      position
+    );
 
   /*
-    Les étoiles sont protégées.
+    Cases étoiles protégées.
   */
 
-  if(LUDO_SAFE.includes(global))
+  if(
+    LUDO_SAFE.includes(absolute)
+  ){
+
     return;
+  }
 
   ludoState.players.forEach(
-    (other,otherIndex) => {
+    otherPlayer => {
 
-      if(otherIndex === playerIndex)
+      if(
+        otherPlayer === movingPlayer
+      ){
+
         return;
+      }
 
-      other.pawns =
-        other.pawns.map(
+      otherPlayer.tokens =
+        otherPlayer.tokens.map(
           otherPosition => {
 
             if(
@@ -1787,18 +1814,15 @@ function ludoCapture3D(
               otherPosition < 52
             ){
 
-              const otherGlobal =
-                (
-                  other.start +
+              const otherAbsolute =
+                ludoAbsolutePosition(
+                  otherPlayer,
                   otherPosition
-                ) % 52;
+                );
 
               if(
-                otherGlobal === global
+                otherAbsolute === absolute
               ){
-
-                ludoState.message =
-                  "💥 Pion capturé !";
 
                 return -1;
               }
@@ -1807,6 +1831,7 @@ function ludoCapture3D(
             return otherPosition;
           }
         );
+
     }
   );
 }
@@ -1815,7 +1840,7 @@ function ludoCapture3D(
    TOUR SUIVANT
 ========================================================= */
 
-function ludoNextTurn3D(){
+function ludoNextTurn(){
 
   if(!ludoState)
     return;
@@ -1828,12 +1853,10 @@ function ludoNextTurn3D(){
 
   ludoState.dice = 0;
 
-  ludoState.rolled = false;
+  ludoState.rolling = false;
 
   const current =
-    ludoState.players[
-      ludoState.turn
-    ];
+    ludoCurrentPlayer();
 
   ludoState.message =
     current.human
@@ -1842,15 +1865,11 @@ function ludoNextTurn3D(){
 
   renderLudo();
 
-  /*
-    Le CPU joue automatiquement.
-  */
-
   if(!current.human){
 
     setTimeout(
-      ludoCpuTurn3D,
-      900
+      ludoCpuTurn,
+      700
     );
   }
 }
@@ -1859,63 +1878,41 @@ function ludoNextTurn3D(){
    CPU
 ========================================================= */
 
-function ludoCpuTurn3D(){
+function ludoCpuTurn(){
 
   if(!ludoState)
     return;
 
-  if(
-    ludoState.winner !== null
-  )
+  if(ludoState.winner)
     return;
 
-  const p =
-    ludoState.players[
-      ludoState.turn
-    ];
+  const cpu =
+    ludoCurrentPlayer();
 
-  if(p.human)
+  if(!cpu || cpu.human)
     return;
 
-  const die =
-    Math.floor(
-      Math.random()*6
-    ) + 1;
-
-  ludoState.dice = die;
-
-  ludoState.rolled = true;
-
-  ludoState.message =
-    "🤖 " +
-    p.name +
-    " lance le dé...";
+  ludoState.rolling = true;
 
   renderLudo();
 
-  /*
-    Petite pause pour laisser
-    voir le dé.
-  */
-
   setTimeout(() => {
 
-    const possible = [];
+    const dice =
+      1 +
+      Math.floor(
+        Math.random()*6
+      );
 
-    p.pawns.forEach(
-      (_,i) => {
+    ludoState.dice = dice;
 
-        if(
-          canLudoPawnMove(
-            ludoState.turn,
-            i
-          )
-        ){
+    ludoState.rolling = false;
 
-          possible.push(i);
-        }
-      }
-    );
+    const possible =
+      ludoMovableTokens(
+        cpu,
+        dice
+      );
 
     /*
       Aucun mouvement.
@@ -1923,298 +1920,645 @@ function ludoCpuTurn3D(){
 
     if(!possible.length){
 
-      ludoState.rolled = false;
+      ludoState.message =
+        "🤖 Aucun mouvement possible.";
 
-      if(die === 6){
+      renderLudo();
+
+      setTimeout(() => {
 
         ludoState.dice = 0;
 
-        ludoState.message =
-          "🤖 Le CPU rejoue.";
+        if(dice === 6){
 
-        renderLudo();
+          ludoState.message =
+            "🤖 Le CPU rejoue.";
 
-        setTimeout(
-          ludoCpuTurn3D,
-          800
-        );
+          renderLudo();
 
-      }else{
+          setTimeout(
+            ludoCpuTurn,
+            600
+          );
 
-        ludoNextTurn3D();
-      }
+        }else{
+
+          ludoNextTurn();
+
+        }
+
+      },700);
 
       return;
     }
 
     /*
-      Priorité :
-      - finir un pion
-      - sortir un pion
-      - avancer
+      Intelligence simple du CPU :
+      1. terminer un pion
+      2. sortir un pion avec 6
+      3. avancer le pion le plus loin
     */
 
-    possible.sort(
-      (a,b) => {
+    let chosen =
+      possible.find(
+        index =>
+          cpu.tokens[index] >= 0 &&
+          cpu.tokens[index] + dice === 52
+      );
 
-        const pa =
-          p.pawns[a];
+    if(chosen === undefined){
 
-        const pb =
-          p.pawns[b];
+      chosen =
+        possible.find(
+          index =>
+            cpu.tokens[index] === -1 &&
+            dice === 6
+        );
 
-        const scoreA =
-          pa === -1
-          ? 100
-          : pa;
+    }
 
-        const scoreB =
-          pb === -1
-          ? 100
-          : pb;
+    if(chosen === undefined){
 
-        return scoreB-scoreA;
-      }
-    );
+      chosen =
+        possible.reduce(
+          (best,index) => {
 
-    const chosen =
-      possible[0];
+            const current =
+              cpu.tokens[index];
+
+            const bestValue =
+              cpu.tokens[best];
+
+            if(current > bestValue)
+              return index;
+
+            return best;
+
+          },
+          possible[0]
+        );
+
+    }
 
     /*
       Déplacement CPU.
     */
 
-    if(p.pawns[chosen] === -1){
+    if(cpu.tokens[chosen] === -1){
 
-      p.pawns[chosen] = 0;
+      cpu.tokens[chosen] = 0;
 
     }else{
 
-      p.pawns[chosen] += die;
+      cpu.tokens[chosen] += dice;
+
     }
 
     /*
-      Capture CPU.
+      Capture.
     */
 
-    ludoCapture3D(
-      ludoState/* =========================================================
-   BLOC 3/3 — FINITIONS LUDO 3D
+    ludoCapture(
+      cpu,
+      chosen
+    );
+
+    /*
+      Victoire CPU.
+    */
+
+    if(
+      cpu.tokens.every(
+        position => position === 52
+      )
+    ){
+
+      ludoState.winner =
+        cpu;
+
+      ludoState.message =
+        "🤖 " +
+        cpu.name +
+        " a gagné !";
+
+      renderLudo();
+
+      return;
+    }
+
+    /*
+      6 = rejouer.
+    */
+
+    if(dice === 6){
+
+      ludoState.dice = 0;
+
+      ludoState.message =
+        "🤖 6 ! Le CPU rejoue.";
+
+      renderLudo();
+
+      setTimeout(
+        ludoCpuTurn,
+        700
+      );
+
+    }else{
+
+      ludoNextTurn();
+
+    }
+
+  },800);
+}
+
+/* =========================================================
+   NOUVELLE PARTIE
 ========================================================= */
 
-/*
-  Animation visuelle lorsqu'un pion est déplacé.
-*/
+function ludoNewGame(){
 
-function ludoAnimateBoard(){
+  ludoState = null;
+
+  renderLudo();
+}
+
+/* =========================================================
+   CRÉATION DU PLATEAU
+========================================================= */
+
+function ludoBuildBoard(){
+
+  let html =
+    '<div class="l3d-board-wrap">' +
+    '<div id="ludoBoard3D">';
+
+  for(let row=0;row<14;row++){
+
+    for(let col=0;col<14;col++){
+
+      let className =
+        "l3d-cell l3d-empty";
+
+      /*
+        Parcours
+      */
+
+      const pathIndex =
+        LUDO_PATH.findIndex(
+          position =>
+            position[0] === row &&
+            position[1] === col
+        );
+
+      if(pathIndex >= 0){
+
+        className =
+          "l3d-cell l3d-track";
+
+        if(
+          LUDO_SAFE.includes(pathIndex)
+        ){
+
+          className +=
+            " l3d-safe";
+        }
+
+      }
+
+      /*
+        Maisons colorées.
+      */
+
+      if(
+        row <= 5 &&
+        col <= 5 &&
+        pathIndex < 0
+      ){
+
+        className =
+          "l3d-cell l3d-red-home";
+      }
+
+      if(
+        row <= 5 &&
+        col >= 8 &&
+        pathIndex < 0
+      ){
+
+        className =
+          "l3d-cell l3d-green-home";
+      }
+
+      if(
+        row >= 8 &&
+        col <= 5 &&
+        pathIndex < 0
+      ){
+
+        className =
+          "l3d-cell l3d-blue-home";
+      }
+
+      if(
+        row >= 8 &&
+        col >= 8 &&
+        pathIndex < 0
+      ){
+
+        className =
+          "l3d-cell l3d-yellow-home";
+      }
+
+      /*
+        Centre.
+      */
+
+      if(
+        row >= 6 &&
+        row <= 7 &&
+        col >= 6 &&
+        col <= 7
+      ){
+
+        className =
+          "l3d-cell l3d-center";
+      }
+
+      html +=
+        `<div
+          class="${className}"
+          data-row="${row}"
+          data-col="${col}"
+          data-path="${pathIndex}">
+        </div>`;
+
+    }
+
+  }
+
+  html +=
+    "</div></div>";
+
+  return html;
+}
+
+/* =========================================================
+   POSITION D'UN PION
+========================================================= */
+
+function ludoPlacePawn(
+  playerData,
+  tokenIndex,
+  html
+){
+
+  const position =
+    playerData.tokens[tokenIndex];
+
+  /*
+    Pion dans la maison.
+  */
+
+  if(position === -1){
+
+    const spot =
+      LUDO_HOME_SPOTS[
+        playerData.color
+      ][tokenIndex];
+
+    return html.replace(
+      `data-row="${spot[0]}" data-col="${spot[1]}"`,
+      `data-row="${spot[0]}" data-col="${spot[1]}"`
+    );
+  }
+
+  /*
+    Pion arrivé.
+  */
+
+  if(position === 52){
+
+    return html;
+  }
+
+  /*
+    Pion sur le parcours.
+  */
+
+  const absolute =
+    ludoAbsolutePosition(
+      playerData,
+      position
+    );
+
+  const spot =
+    LUDO_PATH[absolute];
+
+  return html;
+}
+
+/* =========================================================
+   DESSIN DES PIONS
+========================================================= */
+
+function ludoDrawPawns(){
 
   const board =
     document.getElementById("ludoBoard3D");
 
-  if(!board) return;
-
-  board.style.transform =
-    "scale(.97) rotateX(4deg)";
-
-  setTimeout(() => {
-
-    board.style.transform =
-      "scale(1) rotateX(3deg)";
-
-  },180);
-}
-
-
-/*
-  Petite vibration du plateau
-  lorsque le dé est lancé.
-*/
-
-function ludoShakeDice(){
-
-  const die =
-    document.getElementById("ludoDie");
-
-  if(!die) return;
-
-  die.classList.remove("rolling");
-
-  void die.offsetWidth;
-
-  die.classList.add("rolling");
-}
-
-
-/*
-  Rafraîchissement sécurisé du plateau.
-*/
-
-function ludoRefresh(){
-
-  if(!ludoState)
-    return;
-
-  renderLudo();
-
-  setTimeout(() => {
-    ludoAnimateBoard();
-  },30);
-}
-
-
-/*
-  Gestion améliorée du lancement du dé.
-*/
-
-const oldLudoRoll3D =
-  ludoRoll3D;
-
-ludoRoll3D = function(){
-
-  if(!ludoState)
-    return;
-
-  if(ludoState.rolled)
-    return;
-
-  const current =
-    ludoState.players[
-      ludoState.turn
-    ];
-
-  if(!current || !current.human)
+  if(!board || !ludoState)
     return;
 
   /*
-    Animation immédiate
+    Supprime les anciens pions.
   */
 
-  const die =
-    document.getElementById("ludoDie");
+  board
+    .querySelectorAll(".l3d-pawn")
+    .forEach(
+      pawn => pawn.remove()
+    );
 
-  if(die){
+  ludoState.players.forEach(
+    (playerData,playerIndex) => {
 
-    die.classList.remove("rolling");
+      playerData.tokens.forEach(
+        (position,tokenIndex) => {
 
-    void die.offsetWidth;
+          let row;
+          let col;
 
-    die.classList.add("rolling");
-  }
+          if(position === -1){
 
-  /*
-    Petit délai pour donner
-    l'impression d'un vrai dé 3D.
-  */
+            const spot =
+              LUDO_HOME_SPOTS[
+                playerData.color
+              ][tokenIndex];
 
-  setTimeout(() => {
+            row = spot[0];
+            col = spot[1];
 
-    oldLudoRoll3D();
+          }else if(position === 52){
 
-  },180);
-};
+            /*
+              Les pions arrivés vont
+              visuellement au centre.
+            */
 
+            row = 6;
+            col = 6;
 
-/*
-  Déplacement avec animation.
-*/
+          }else{
 
-const oldLudoMovePawn3D =
-  ludoMovePawn3D;
+            const absolute =
+              ludoAbsolutePosition(
+                playerData,
+                position
+              );
 
-ludoMovePawn3D = function(
-  pawnIndex
-){
+            const spot =
+              LUDO_PATH[absolute];
 
-  if(!ludoState)
-    return;
+            row = spot[0];
+            col = spot[1];
+          }
 
-  oldLudoMovePawn3D(
-    pawnIndex
+          const cell =
+            board.querySelector(
+              `[data-row="${row}"][data-col="${col}"]`
+            );
+
+          if(!cell)
+            return;
+
+          const pawn =
+            document.createElement("div");
+
+          pawn.className =
+            "l3d-pawn " +
+            playerData.color;
+
+          /*
+            Plusieurs pions sur une même case :
+            léger décalage.
+          */
+
+          const offset =
+            tokenIndex * 5;
+
+          pawn.style.transform =
+            `translate(${offset/2}px,${offset/2}px)`;
+
+          /*
+            Pion jouable.
+          */
+
+          if(
+            playerData.human &&
+            playerIndex === ludoState.turn &&
+            !ludoState.winner &&
+            !ludoState.rolling &&
+            ludoState.dice > 0 &&
+            ludoMovableTokens(
+              playerData,
+              ludoState.dice
+            ).includes(tokenIndex)
+          ){
+
+            pawn.classList.add(
+              "movable"
+            );
+
+            pawn.onclick = () => {
+
+              ludoMoveToken(
+                tokenIndex
+              );
+
+            };
+          }
+
+          cell.appendChild(pawn);
+
+        }
+      );
+
+    }
   );
-
-  setTimeout(() => {
-
-    if(ludoState)
-      ludoAnimateBoard();
-
-  },50);
-};
-
+}
 
 /* =========================================================
-   EMPÊCHER LE SCROLL HORIZONTAL
+   AFFICHAGE FINAL DU LUDO
 ========================================================= */
 
-(function(){
+function renderLudo(){
 
-  if(document.getElementById("ludo3DExtraStyle"))
+  installLudo3DStyle();
+
+  const box =
+    document.getElementById("ludoGame");
+
+  if(!box)
     return;
 
-  const style =
-    document.createElement("style");
+  /*
+    Configuration avant partie.
+  */
 
-  style.id =
-    "ludo3DExtraStyle";
+  if(!ludoState){
 
-  style.textContent = `
+    box.innerHTML =
+      ludoSetupHTML();
 
-    html, body{
-      overflow-x:hidden;
-    }
+    return;
+  }
 
-    #ludoGame{
-      overflow-x:hidden;
-    }
+  const current =
+    ludoCurrentPlayer();
 
-    #ludoBoard3D{
-      transition:
-        transform .18s ease,
-        filter .18s ease;
-    }
+  const faces = [
+    "",
+    "⚀",
+    "⚁",
+    "⚂",
+    "⚃",
+    "⚄",
+    "⚅"
+  ];
 
-    .l3d-pawn{
-      transition:
-        transform .2s ease,
-        filter .2s ease;
-    }
+  let html = `
 
-    .l3d-roll{
-      transition:
-        transform .12s ease,
-        box-shadow .12s ease;
-    }
+    <div class="l3d">
 
-    .l3d-roll:active{
-      transform:translateY(5px);
-      box-shadow:
-        0 2px 0 #947000,
-        0 5px 10px #0008;
-    }
+      <div class="l3d-title">
+        🎲 LUDO 3D
+      </div>
 
-    .l3d-play{
-      transition:
-        transform .12s ease;
-    }
+      <div class="l3d-sub">
+        Mode classique •
+        ${ludoState.players.length} joueurs
+      </div>
 
-    .l3d-play:active{
-      transform:translateY(5px);
-    }
+      <div class="l3d-panel">
 
-    .l3d-cell{
-      transition:
-        filter .15s ease;
-    }
+        <div class="l3d-top">
 
-    .l3d-cell:hover{
-      filter:brightness(1.08);
-    }
+          <div class="l3d-turn">
+
+            ${
+              current.human
+              ? "🧑 Ton tour"
+              : "🤖 " + current.name
+            }
+
+            ${LUDO_COLORS[current.color].icon}
+
+          </div>
+
+          <div
+            id="ludoDie"
+            class="l3d-dice ${
+              ludoState.rolling
+              ? "rolling"
+              : ""
+            }"
+            onclick="ludoRoll()">
+
+            ${
+              ludoState.dice
+              ? faces[ludoState.dice]
+              : "🎲"
+            }
+
+          </div>
+
+        </div>
+
+        ${ludoBuildBoard()}
+
+        <div class="l3d-info">
+
+          ${ludoState.message}
+
+        </div>
+
+        <div class="l3d-actions">
+
+          <button
+            class="l3d-btn"
+            onclick="ludoRoll()">
+
+            🎲 Lancer le dé
+
+          </button>
+
+          <button
+            class="l3d-btn secondary"
+            onclick="ludoNewGame()">
+
+            ↻ Nouvelle partie
+
+          </button>
+
+        </div>
+
+        ${
+          ludoState.winner
+          ? `
+            <div class="l3d-winner">
+
+              🏆
+              ${ludoState.winner.name}
+              gagne !
+
+              ${
+                ludoState.winner.human
+                ? "<br>+100 points 🎉"
+                : ""
+              }
+
+            </div>
+          `
+          : ""
+        }
+
+      </div>
+
+    </div>
 
   `;
 
-  document.head.appendChild(style);
+  box.innerHTML = html;
 
-})();
+  /*
+    Les pions sont dessinés après
+    la création du plateau.
+  */
 
+  ludoDrawPawns();
+}
 
 /* =========================================================
-   COMPATIBILITÉ AVEC LES ANCIENS
+   INITIALISATION
+========================================================= */
+
+if(
+  document.readyState !== "loading"
+){
+
+  render();
+
+}else{
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    render
+  );
+
+}
+
+/* =========================================================
+   FIN APP.JS
+========================================================= */
