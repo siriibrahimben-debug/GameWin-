@@ -2544,18 +2544,37 @@ function renderLudo(){
    INITIALISATION
 ========================================================= */
 
+function initGameWin(){
+
+  document
+    .querySelectorAll("nav button[data-page]")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => showPage(button.dataset.page)
+      );
+
+    });
+
+  render();
+
+}
+
 if(
   document.readyState !== "loading"
 ){
 
-  render();
+  initGameWin();
 
 }else{
 
   document.addEventListener(
     "DOMContentLoaded",
-    render
+    initGameWin
   );
+
+}
 
 }
 
