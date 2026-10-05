@@ -2742,20 +2742,25 @@ function initGameWin(){
      l'avait supprimée.
   */
 
-  if(
-    !Array.isArray(games) ||
-    games.length === 0
-  ){
+  /* Restaurer automatiquement les jeux manquants */
+if(!Array.isArray(games)){
+  games = [];
+}
 
-    games =
-      defaultGames.slice();
+defaultGames.forEach(defaultGame => {
+  const exists = games.some(
+    game => game.name === defaultGame.name
+  );
 
-    localStorage.setItem(
-      "games",
-      JSON.stringify(games)
-    );
-
+  if(!exists){
+    games.push(defaultGame);
   }
+});
+
+localStorage.setItem(
+  "games",
+  JSON.stringify(games)
+);
 
   render();
 
