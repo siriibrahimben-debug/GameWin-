@@ -32,9 +32,23 @@ const questions = [
   }
 ];
 
-let games =
-  JSON.parse(localStorage.games || "null") ||
-  defaultGames.slice();
+let games;
+
+try{
+
+  const savedGames =
+    JSON.parse(localStorage.games || "null");
+
+  games =
+    Array.isArray(savedGames) && savedGames.length > 0
+      ? savedGames
+      : defaultGames.slice();
+
+}catch(e){
+
+  games = defaultGames.slice();
+
+}
 
 let rewards =
   JSON.parse(localStorage.rewards || "null") || [
