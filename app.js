@@ -1,86 +1,252 @@
 /* =========================================================
    GAMEWIN — APP.JS
-   VERSION CORRIGÉE
+   VERSION PROPRE — RECONSTRUCTION COMPLÈTE
 ========================================================= */
 
 const defaultGames = [
-  {name:"Quiz Culture Générale",icon:"🧠",points:50,type:"quiz"},
-  {name:"Puzzle",icon:"🧩",points:40,type:"soon"},
-  {name:"Défi Rapide",icon:"⚡",points:60,type:"soon"},
-  {name:"Tir de précision",icon:"🎯",points:50,type:"soon"},
-  {name:"Échecs",icon:"♟️",points:70,type:"soon"},
-  {name:"Tournoi",icon:"🏆",points:100,type:"soon"},
-  {name:"Devine le nombre",icon:"🔢",points:50,type:"number"},
-  {name:"Ludo",icon:"🎲",points:100,type:"ludo"}
-];
-
-const questions = [
   {
-    q:"Quelle est la capitale du Burkina Faso ?",
-    a:["Bobo-Dioulasso","Ouagadougou","Koudougou","Banfora"],
-    c:1
+    name: "Quiz Culture Générale",
+    icon: "🧠",
+    points: 50,
+    type: "quiz"
   },
   {
-    q:"Combien font 7 × 8 ?",
-    a:["54","56","64","48"],
-    c:1
+    name: "Puzzle",
+    icon: "🧩",
+    points: 40,
+    type: "soon"
   },
   {
-    q:"Quelle planète est surnommée la planète rouge ?",
-    a:["Mars","Vénus","Jupiter","Mercure"],
-    c:0
+    name: "Défi Rapide",
+    icon: "⚡",
+    points: 60,
+    type: "soon"
+  },
+  {
+    name: "Tir de précision",
+    icon: "🎯",
+    points: 50,
+    type: "soon"
+  },
+  {
+    name: "Échecs",
+    icon: "♟️",
+    points: 70,
+    type: "soon"
+  },
+  {
+    name: "Tournoi",
+    icon: "🏆",
+    points: 100,
+    type: "soon"
+  },
+  {
+    name: "Devine le nombre",
+    icon: "🔢",
+    points: 50,
+    type: "number"
+  },
+  {
+    name: "Ludo",
+    icon: "🎲",
+    points: 100,
+    type: "ludo"
   }
 ];
 
-let games;
+/* =========================================================
+   QUESTIONS
+========================================================= */
 
-try{
+const questions = [
+  {
+    q: "Quelle est la capitale du Burkina Faso ?",
+    a: [
+      "Bobo-Dioulasso",
+      "Ouagadougou",
+      "Koudougou",
+      "Banfora"
+    ],
+    c: 1
+  },
+  {
+    q: "Combien font 7 × 8 ?",
+    a: [
+      "54",
+      "56",
+      "64",
+      "48"
+    ],
+    c: 1
+  },
+  {
+    q: "Quelle planète est surnommée la planète rouge ?",
+    a: [
+      "Mars",
+      "Vénus",
+      "Jupiter",
+      "Mercure"
+    ],
+    c: 0
+  },
+  {
+    q: "Combien y a-t-il de continents ?",
+    a: [
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    c: 2
+  },
+  {
+    q: "Quel est le plus grand océan du monde ?",
+    a: [
+      "Atlantique",
+      "Indien",
+      "Arctique",
+      "Pacifique"
+    ],
+    c: 3
+  }
+];
 
-  const savedGames =
-    JSON.parse(localStorage.games || "null");
+/* =========================================================
+   DONNÉES
+========================================================= */
 
-  games =
-    Array.isArray(savedGames) && savedGames.length > 0
-      ? savedGames
-      : defaultGames.slice();
+const defaultRewards = [
+  {
+    name: "Badge Champion",
+    cost: 500,
+    icon: "🏅"
+  },
+  {
+    name: "Carte cadeau",
+    cost: 2000,
+    icon: "🎁"
+  },
+  {
+    name: "Accessoire gaming",
+    cost: 5000,
+    icon: "🎧"
+  }
+];
 
-}catch(e){
+function loadJSON(key, fallback){
 
-  games = defaultGames.slice();
+  try{
+
+    const value = JSON.parse(
+      localStorage.getItem(key)
+    );
+
+    return value;
+
+  }catch(e){
+
+    return fallback;
+
+  }
 
 }
 
-let rewards =
-  JSON.parse(localStorage.rewards || "null") || [
-    {name:"Badge Champion",cost:500,icon:"🏅"},
-    {name:"Carte cadeau",cost:2000,icon:"🎁"},
-    {name:"Accessoire gaming",cost:5000,icon:"🎧"}
-  ];
+/*
+   IMPORTANT :
+   Si l'ancien localStorage contient un tableau vide
+   pour les jeux, on remet automatiquement les jeux
+   par défaut.
+*/
 
-let player =
-  JSON.parse(localStorage.player || "null") || {
-    name:"Visiteur",
-    points:0
+let games = loadJSON("games", null);
+
+if(
+  !Array.isArray(games) ||
+  games.length === 0
+){
+
+  games = defaultGames.slice();
+
+  localStorage.setItem(
+    "games",
+    JSON.stringify(games)
+  );
+
+}
+
+let rewards = loadJSON(
+  "rewards",
+  defaultRewards.slice()
+);
+
+if(
+  !Array.isArray(rewards) ||
+  rewards.length === 0
+){
+
+  rewards = defaultRewards.slice();
+
+}
+
+let player = loadJSON(
+  "player",
+  {
+    name: "Visiteur",
+    points: 0
+  }
+);
+
+if(
+  !player ||
+  typeof player !== "object"
+){
+
+  player = {
+    name: "Visiteur",
+    points: 0
   };
 
-let rewardRequests =
-  JSON.parse(localStorage.rewardRequests || "null") || [];
+}
 
-let qi = 0;
-let secretNumber = 0;
+let rewardRequests = loadJSON(
+  "rewardRequests",
+  []
+);
+
+if(!Array.isArray(rewardRequests)){
+
+  rewardRequests = [];
+
+}
 
 /* =========================================================
    SAUVEGARDE
 ========================================================= */
 
-function save(){
+function saveData(){
 
-  localStorage.games = JSON.stringify(games);
-  localStorage.rewards = JSON.stringify(rewards);
-  localStorage.player = JSON.stringify(player);
-  localStorage.rewardRequests = JSON.stringify(rewardRequests);
+  localStorage.setItem(
+    "games",
+    JSON.stringify(games)
+  );
+
+  localStorage.setItem(
+    "rewards",
+    JSON.stringify(rewards)
+  );
+
+  localStorage.setItem(
+    "player",
+    JSON.stringify(player)
+  );
+
+  localStorage.setItem(
+    "rewardRequests",
+    JSON.stringify(rewardRequests)
+  );
 
   render();
+
 }
 
 /* =========================================================
@@ -89,32 +255,65 @@ function save(){
 
 function showPage(id){
 
-  document.querySelectorAll(".page")
-    .forEach(p => p.classList.remove("active"));
+  document
+    .querySelectorAll(".page")
+    .forEach(page => {
 
-  const page = document.getElementById(id);
+      page.classList.remove("active");
+
+    });
+
+  const page =
+    document.getElementById(id);
 
   if(page){
+
     page.classList.add("active");
+
+  }
+
+  if(id === "ranking"){
+
+    renderRanking();
+
+  }
+
+  if(id === "rewards"){
+
+    renderRewards();
+
+  }
+
+  if(id === "admin"){
+
+    renderAdmin();
+
   }
 
   if(id === "ludoGame"){
+
     renderLudo();
+
   }
+
 }
 
 /* =========================================================
-   AFFICHAGE
+   AFFICHAGE PRINCIPAL
 ========================================================= */
 
 function render(){
 
-  const userArea = document.getElementById("userArea");
+  const userArea =
+    document.getElementById("userArea");
 
   if(userArea){
 
     userArea.innerHTML = `
-      <button class="primary" onclick="openLogin()">
+      <button
+        class="primary"
+        onclick="openLogin()"
+      >
         ${
           player.name === "Visiteur"
           ? "S'inscrire"
@@ -122,362 +321,410 @@ function render(){
         }
       </button>
     `;
+
   }
 
-  const statGames = document.getElementById("statGames");
-  const statPlayers = document.getElementById("statPlayers");
-  const statPoints = document.getElementById("statPoints");
+  const statGames =
+    document.getElementById("statGames");
 
-  if(statGames)
-    statGames.textContent = games.length;
+  const statPlayers =
+    document.getElementById("statPlayers");
 
-  if(statPlayers)
+  const statPoints =
+    document.getElementById("statPoints");
+
+  if(statGames){
+
+    statGames.textContent =
+      games.length;
+
+  }
+
+  if(statPlayers){
+
     statPlayers.textContent = "1";
 
-  if(statPoints)
-    statPoints.textContent = player.points;
+  }
 
-  const aGames = document.getElementById("aGames");
-  const aPlayers = document.getElementById("aPlayers");
-  const aPoints = document.getElementById("aPoints");
+  if(statPoints){
 
-  if(aGames)
-    aGames.textContent = games.length;
+    statPoints.textContent =
+      player.points;
 
-  if(aPlayers)
+  }
+
+  const aGames =
+    document.getElementById("aGames");
+
+  const aPlayers =
+    document.getElementById("aPlayers");
+
+  const aPoints =
+    document.getElementById("aPoints");
+
+  if(aGames){
+
+    aGames.textContent =
+      games.length;
+
+  }
+
+  if(aPlayers){
+
     aPlayers.textContent = "1";
 
-  if(aPoints)
-    aPoints.textContent = player.points;
+  }
 
-  const gameGrid = document.getElementById("gameGrid");
+  if(aPoints){
 
-  if(gameGrid){
+    aPoints.textContent =
+      player.points;
 
-    gameGrid.innerHTML =
-      games.map(g => `
+  }
 
+  renderGames();
+
+  renderRewards();
+
+  renderRanking();
+
+  renderAdmin();
+
+}
+
+/* =========================================================
+   JEUX
+========================================================= */
+
+function renderGames(){
+
+  const gameGrid =
+    document.getElementById("gameGrid");
+
+  if(!gameGrid){
+
+    return;
+
+  }
+
+  gameGrid.innerHTML =
+    games.map((game, index) => {
+
+      let button = "";
+
+      if(game.type === "quiz"){
+
+        button = `
+          <button
+            class="primary"
+            onclick="startQuiz()"
+          >
+            Jouer
+          </button>
+        `;
+
+      }else if(game.type === "number"){
+
+        button = `
+          <button
+            class="primary"
+            onclick="startNumberGame()"
+          >
+            Jouer
+          </button>
+        `;
+
+      }else if(game.type === "ludo"){
+
+        button = `
+          <button
+            class="primary"
+            onclick="startLudo()"
+          >
+            Jouer
+          </button>
+        `;
+
+      }else{
+
+        button = `
+          <button
+            class="primary"
+            onclick="comingSoon()"
+          >
+            Bientôt
+          </button>
+        `;
+
+      }
+
+      return `
         <div class="game">
 
           <div class="icon">
-            ${g.icon}
+            ${game.icon}
           </div>
 
           <h3>
-            ${g.name}
+            ${game.name}
           </h3>
 
           <p class="muted">
             Joue et gagne jusqu'à
-            ${g.points} points.
+            ${game.points} points.
           </p>
 
-          ${
-            g.type === "quiz"
-            ? `
-              <button class="primary"
-                onclick="startQuiz()">
-                Jouer
-              </button>
-            `
-            :
-            g.type === "number"
-            ? `
-              <button class="primary"
-                onclick="startNumberGame()">
-                Jouer
-              </button>
-            `
-            :
-            g.type === "ludo"
-            ? `
-              <button class="primary"
-                onclick="startLudo()">
-                Jouer
-              </button>
-            `
-            :
-            `
-              <button class="primary"
-                onclick="alert('Ce jeu sera bientôt disponible.')">
-                Jouer
-              </button>
-            `
-          }
+          ${button}
 
         </div>
+      `;
 
-      `).join("");
-  }
+    }).join("");
 
-  const rewardGrid = document.getElementById("rewardGrid");
-
-  if(rewardGrid){
-
-    rewardGrid.innerHTML =
-      rewards.map(r => `
-
-        <div class="reward">
-
-          <div class="icon">
-            ${r.icon}
-          </div>
-
-          <h3>
-            ${r.name}
-          </h3>
-
-          <p>
-            ${r.cost} points
-          </p>
-
-          <button class="primary"
-            onclick="claim(${r.cost},'${r.name}')">
-            Échanger
-          </button>
-
-        </div>
-
-      `).join("");
-  }
-
-  const rankingBody =
-    document.getElementById("rankingBody");
-
-  if(rankingBody){
-
-    rankingBody.innerHTML = `
-      <tr>
-        <td>1</td>
-        <td>${player.name}</td>
-        <td>${player.points}</td>
-      </tr>
-    `;
-  }
-
-  const requestsBox =
-    document.getElementById("rewardRequests");
-
-  if(requestsBox){
-
-    if(!rewardRequests.length){
-
-      requestsBox.innerHTML =
-        `<p class="muted">
-          Aucune demande de récompense.
-        </p>`;
-
-    }else{
-
-      requestsBox.innerHTML =
-        rewardRequests.map(r => `
-
-          <div class="panel">
-
-            <h3>
-              🎁 ${r.reward}
-            </h3>
-
-            <p>
-              👤 ${r.player}
-            </p>
-
-            <p>
-              💰 ${r.cost} points
-            </p>
-
-            <p>
-              Statut :
-              <strong>
-                ${
-                  r.status === "pending"
-                  ? "🟡 En attente"
-                  : r.status === "approved"
-                  ? "✅ Validée"
-                  : "❌ Refusée"
-                }
-              </strong>
-            </p>
-
-            ${
-              r.status === "pending"
-              ? `
-                <button class="primary"
-                  onclick="approveReward(${r.id})">
-                  ✅ Valider
-                </button>
-
-                <button class="primary"
-                  onclick="rejectReward(${r.id})">
-                  ❌ Refuser
-                </button>
-              `
-              : ""
-            }
-
-          </div>
-
-        `).join("");
-    }
-  }
 }
 
 /* =========================================================
-   LOGIN
+   JEUX BIENTÔT DISPONIBLES
+========================================================= */
+
+function comingSoon(){
+
+  alert(
+    "🎮 Ce jeu sera bientôt disponible !"
+  );
+
+}
+
+/* =========================================================
+   PROFIL
 ========================================================= */
 
 function openLogin(){
 
-  const modal = document.getElementById("loginModal");
+  const modal =
+    document.getElementById("loginModal");
 
-  if(modal)
+  if(modal){
+
     modal.classList.remove("hidden");
+
+  }
+
+  const input =
+    document.getElementById("username");
+
+  if(input){
+
+    input.value =
+      player.name === "Visiteur"
+      ? ""
+      : player.name;
+
+    setTimeout(
+      () => input.focus(),
+      100
+    );
+
+  }
+
 }
 
 function closeLogin(){
 
-  const modal = document.getElementById("loginModal");
+  const modal =
+    document.getElementById("loginModal");
 
-  if(modal)
+  if(modal){
+
     modal.classList.add("hidden");
+
+  }
+
 }
 
 function login(){
 
-  const input = document.getElementById("username");
+  const input =
+    document.getElementById("username");
 
-  if(!input) return;
-
-  const name = input.value.trim();
-
-  if(!name){
-
-    alert("Entre un pseudo.");
+  if(!input){
 
     return;
+
+  }
+
+  const name =
+    input.value.trim();
+
+  if(name.length < 2){
+
+    alert(
+      "Entre un pseudo d'au moins 2 caractères."
+    );
+
+    return;
+
   }
 
   player.name = name;
 
+  saveData();
+
   closeLogin();
 
-  save();
+  alert(
+    "Bienvenue " + name + " ! 🎮"
+  );
+
 }
 
 /* =========================================================
    QUIZ
 ========================================================= */
 
+let quizIndex = 0;
+let quizScore = 0;
+
 function startQuiz(){
 
-  qi = 0;
+  quizIndex = 0;
+  quizScore = 0;
 
   showPage("quiz");
 
-  nextQuestion();
+  renderQuestion();
+
 }
 
-function nextQuestion(){
+function renderQuestion(){
 
-  if(qi >= questions.length){
+  const meta =
+    document.getElementById("quizMeta");
 
-    const q = document.getElementById("question");
-    const a = document.getElementById("answers");
-    const r = document.getElementById("quizResult");
+  const question =
+    document.getElementById("question");
 
-    if(q)
-      q.textContent = "Quiz terminé 🎉";
-
-    if(a)
-      a.innerHTML = `
-        <button class="primary"
-          onclick="showPage('games')">
-          Retour aux jeux
-        </button>
-      `;
-
-    if(r)
-      r.textContent =
-        `Tu as ${player.points} points.`;
-
-    return;
-  }
-
-  const x = questions[qi];
-
-  const meta = document.getElementById("quizMeta");
-  const q = document.getElementById("question");
-  const r = document.getElementById("quizResult");
-  const a = document.getElementById("answers");
-
-  if(meta)
-    meta.textContent =
-      `Question ${qi+1}/${questions.length}`;
-
-  if(q)
-    q.textContent = x.q;
-
-  if(r)
-    r.textContent = "";
-
-  if(a){
-
-    a.innerHTML =
-      x.a.map((answer,i) => `
-
-        <button class="answer"
-          onclick="answer(${i})">
-
-          ${String.fromCharCode(65+i)}
-          — ${answer}
-
-        </button>
-
-      `).join("");
-  }
-}
-
-function answer(i){
-
-  const x = questions[qi];
+  const answers =
+    document.getElementById("answers");
 
   const result =
     document.getElementById("quizResult");
 
-  if(i === x.c){
+  if(!question || !answers){
 
-    player.points += 50;
+    return;
 
-    if(result)
-      result.textContent =
-        "Bonne réponse ! +50 points 🎉";
-
-  }else{
-
-    if(result)
-      result.textContent =
-        "Pas cette fois. Continue !";
   }
 
-  qi++;
+  if(meta){
 
-  setTimeout(() => {
+    meta.textContent =
+      "Question " +
+      (quizIndex + 1) +
+      " / " +
+      questions.length;
 
-    save();
+  }
 
-    nextQuestion();
+  if(result){
 
-  },700);
+    result.textContent = "";
+
+  }
+
+  const current =
+    questions[quizIndex];
+
+  question.textContent =
+    current.q;
+
+  answers.innerHTML =
+    current.a.map(
+      (answer, index) => `
+        <button
+          class="primary"
+          style="display:block;width:100%;margin:8px 0"
+          onclick="answerQuiz(${index})"
+        >
+          ${answer}
+        </button>
+      `
+    ).join("");
+
+}
+
+function answerQuiz(index){
+
+  const current =
+    questions[quizIndex];
+
+  if(index === current.c){
+
+    quizScore += 10;
+
+  }
+
+  quizIndex++;
+
+  if(
+    quizIndex >= questions.length
+  ){
+
+    player.points += quizScore;
+
+    saveData();
+
+    const result =
+      document.getElementById("quizResult");
+
+    if(result){
+
+      result.innerHTML =
+        "🎉 Quiz terminé ! +" +
+        quizScore +
+        " points";
+
+    }
+
+    const answers =
+      document.getElementById("answers");
+
+    if(answers){
+
+      answers.innerHTML = `
+        <button
+          class="primary"
+          onclick="showPage('games')"
+        >
+          Retour aux jeux
+        </button>
+      `;
+
+    }
+
+    return;
+
+  }
+
+  renderQuestion();
+
 }
 
 /* =========================================================
    DEVINE LE NOMBRE
 ========================================================= */
 
+let secretNumber = 0;
+let numberAttempts = 0;
+
 function startNumberGame(){
 
   secretNumber =
-    Math.floor(Math.random()*100)+1;
+    Math.floor(
+      Math.random() * 100
+    ) + 1;
+
+  numberAttempts = 0;
 
   const input =
     document.getElementById("numberGuess");
@@ -485,14 +732,21 @@ function startNumberGame(){
   const result =
     document.getElementById("numberResult");
 
-  if(input)
+  if(input){
+
     input.value = "";
 
-  if(result)
+  }
+
+  if(result){
+
     result.textContent =
-      "Entre un nombre entre 1 et 100.";
+      "J'ai choisi un nombre entre 1 et 100.";
+
+  }
 
   showPage("numberGame");
+
 }
 
 function guessNumber(){
@@ -503,30 +757,50 @@ function guessNumber(){
   const result =
     document.getElementById("numberResult");
 
-  if(!input || !result)
-    return;
-
-  const n = +input.value;
-
-  if(!n || n<1 || n>100){
-
-    alert("Entre un nombre entre 1 et 100.");
+  if(!input || !result){
 
     return;
+
   }
 
-  if(n === secretNumber){
+  const guess =
+    Number(input.value);
 
-    player.points += 50;
+  if(
+    !Number.isInteger(guess) ||
+    guess < 1 ||
+    guess > 100
+  ){
 
     result.textContent =
-      "🎉 Bravo ! +50 points";
+      "Entre un nombre entre 1 et 100.";
 
-    secretNumber = 0;
+    return;
 
-    save();
+  }
 
-  }else if(n < secretNumber){
+  numberAttempts++;
+
+  if(guess === secretNumber){
+
+    const points =
+      Math.max(
+        10,
+        50 - ((numberAttempts - 1) * 5)
+      );
+
+    player.points += points;
+
+    saveData();
+
+    result.innerHTML =
+      "🎉 Bravo ! Le nombre était " +
+      secretNumber +
+      ". +" +
+      points +
+      " points !";
+
+  }else if(guess < secretNumber){
 
     result.textContent =
       "⬆️ Plus grand !";
@@ -535,726 +809,726 @@ function guessNumber(){
 
     result.textContent =
       "⬇️ Plus petit !";
+
   }
+
 }
 
 /* =========================================================
+   FIN BLOC 1
+========================================================= *//* =========================================================
    RÉCOMPENSES
 ========================================================= */
 
-function claim(cost,name){
+function renderRewards(){
 
-  if(player.points < cost){
+  const grid =
+    document.getElementById("rewardGrid");
 
-    alert("Pas assez de points.");
+  if(!grid){
 
     return;
+
   }
 
-  if(!confirm(
-    "Confirmer l'échange de " +
-    cost +
-    " points contre " +
-    name +
-    " ?"
-  )){
+  grid.innerHTML =
+    rewards.map(
+      (reward, index) => `
+
+        <div class="game">
+
+          <div class="icon">
+            ${reward.icon || "🎁"}
+          </div>
+
+          <h3>
+            ${reward.name}
+          </h3>
+
+          <p class="muted">
+            Coût :
+            <strong>
+              ${reward.cost}
+            </strong>
+            points
+          </p>
+
+          <button
+            class="primary"
+            onclick="claimReward(${index})"
+          >
+            Réclamer
+          </button>
+
+        </div>
+
+      `
+    ).join("");
+
+}
+
+function claimReward(index){
+
+  const reward =
+    rewards[index];
+
+  if(!reward){
+
     return;
+
   }
 
-  player.points -= cost;
+  if(player.points < reward.cost){
+
+    alert(
+      "❌ Tu n'as pas assez de points."
+    );
+
+    return;
+
+  }
+
+  const confirmed =
+    confirm(
+      "Réclamer " +
+      reward.name +
+      " pour " +
+      reward.cost +
+      " points ?"
+    );
+
+  if(!confirmed){
+
+    return;
+
+  }
+
+  player.points -= reward.cost;
 
   rewardRequests.push({
-    id:Date.now(),
-    player:player.name,
-    reward:name,
-    cost:cost,
-    status:"pending"
+
+    id: Date.now(),
+
+    player:
+      player.name,
+
+    reward:
+      reward.name,
+
+    cost:
+      reward.cost,
+
+    status:
+      "pending"
+
   });
 
-  save();
+  saveData();
 
   alert(
-    "Demande enregistrée. " +
-    "L'administrateur doit valider."
+    "✅ Demande envoyée à l'administrateur."
   );
+
 }
 
-function approveReward(id){
+/* =========================================================
+   CLASSEMENT
+========================================================= */
 
-  const r =
-    rewardRequests.find(x => x.id === id);
+function renderRanking(){
 
-  if(!r) return;
+  const body =
+    document.getElementById("rankingBody");
 
-  r.status = "approved";
+  if(!body){
 
-  save();
+    return;
 
-  alert("Récompense validée.");
-}
-
-function rejectReward(id){
-
-  const r =
-    rewardRequests.find(x => x.id === id);
-
-  if(!r) return;
-
-  if(r.status === "pending"){
-    player.points += r.cost;
   }
 
-  r.status = "rejected";
+  body.innerHTML = `
+    <tr>
 
-  save();
+      <td>1</td>
 
-  alert(
-    "Demande refusée. " +
-    "Les points ont été rendus."
-  );
+      <td>
+        ${player.name}
+      </td>
+
+      <td>
+        ${player.points}
+      </td>
+
+    </tr>
+  `;
+
 }
 
 /* =========================================================
    ADMIN
 ========================================================= */
 
+function renderAdmin(){
+
+  const box =
+    document.getElementById(
+      "rewardRequests"
+    );
+
+  if(!box){
+
+    return;
+
+  }
+
+  if(rewardRequests.length === 0){
+
+    box.innerHTML = `
+      <p class="muted">
+        Aucune demande de récompense.
+      </p>
+    `;
+
+    return;
+
+  }
+
+  box.innerHTML =
+    rewardRequests.map(
+      (request, index) => {
+
+        const status =
+          request.status === "approved"
+          ? "✅ Validée"
+          : request.status === "rejected"
+          ? "❌ Refusée"
+          : "⏳ En attente";
+
+        let actions = "";
+
+        if(
+          request.status === "pending"
+        ){
+
+          actions = `
+            <div
+              style="margin-top:10px"
+            >
+
+              <button
+                class="primary"
+                onclick="approveReward(${index})"
+              >
+                ✅ Valider
+              </button>
+
+              <button
+                class="primary"
+                onclick="rejectReward(${index})"
+              >
+                ❌ Refuser
+              </button>
+
+            </div>
+          `;
+
+        }
+
+        return `
+          <div
+            class="panel"
+            style="margin-bottom:12px"
+          >
+
+            <strong>
+              ${request.reward}
+            </strong>
+
+            <p>
+              Joueur :
+              ${request.player}
+            </p>
+
+            <p>
+              Coût :
+              ${request.cost} points
+            </p>
+
+            <p>
+              ${status}
+            </p>
+
+            ${actions}
+
+          </div>
+        `;
+
+      }
+    ).join("");
+
+}
+
+function approveReward(index){
+
+  const request =
+    rewardRequests[index];
+
+  if(!request){
+
+    return;
+
+  }
+
+  if(
+    request.status !== "pending"
+  ){
+
+    return;
+
+  }
+
+  request.status =
+    "approved";
+
+  saveData();
+
+  alert(
+    "Récompense validée. ✅"
+  );
+
+}
+
+function rejectReward(index){
+
+  const request =
+    rewardRequests[index];
+
+  if(!request){
+
+    return;
+
+  }
+
+  if(
+    request.status !== "pending"
+  ){
+
+    return;
+
+  }
+
+  request.status =
+    "rejected";
+
+  /*
+     On rembourse les points
+     puisque la récompense est refusée.
+  */
+
+  player.points +=
+    Number(request.cost) || 0;
+
+  saveData();
+
+  alert(
+    "Récompense refusée. Les points ont été remboursés. ✅"
+  );
+
+}
+
+/* =========================================================
+   ADMIN — AJOUTER UN JEU
+========================================================= */
+
 function addGame(){
 
   const nameInput =
-    document.getElementById("newGameName");
+    document.getElementById(
+      "newGameName"
+    );
 
   const pointsInput =
-    document.getElementById("newGamePoints");
+    document.getElementById(
+      "newGamePoints"
+    );
 
-  if(!nameInput || !pointsInput)
+  if(!nameInput || !pointsInput){
+
     return;
+
+  }
 
   const name =
     nameInput.value.trim();
 
   const points =
-    +pointsInput.value;
+    Number(pointsInput.value);
 
-  if(!name || !points){
+  if(!name){
 
-    alert("Complète les champs.");
+    alert(
+      "Entre le nom du jeu."
+    );
 
     return;
+
+  }
+
+  if(
+    !Number.isFinite(points) ||
+    points <= 0
+  ){
+
+    alert(
+      "Entre un nombre de points valide."
+    );
+
+    return;
+
   }
 
   games.push({
-    name:name,
-    icon:"🎮",
-    points:points,
-    type:"soon"
+
+    name:
+      name,
+
+    icon:
+      "🎮",
+
+    points:
+      points,
+
+    type:
+      "soon"
+
   });
 
   nameInput.value = "";
+
   pointsInput.value = "";
 
-  save();
+  saveData();
+
+  alert(
+    "🎮 Jeu ajouté avec succès."
+  );
+
 }
+
+/* =========================================================
+   ADMIN — AJOUTER UNE RÉCOMPENSE
+========================================================= */
 
 function addReward(){
 
   const nameInput =
-    document.getElementById("newRewardName");
+    document.getElementById(
+      "newRewardName"
+    );
 
   const costInput =
-    document.getElementById("newRewardCost");
+    document.getElementById(
+      "newRewardCost"
+    );
 
-  if(!nameInput || !costInput)
+  if(!nameInput || !costInput){
+
     return;
+
+  }
 
   const name =
     nameInput.value.trim();
 
   const cost =
-    +costInput.value;
+    Number(costInput.value);
 
-  if(!name || !cost){
+  if(!name){
 
-    alert("Complète les champs.");
+    alert(
+      "Entre le nom de la récompense."
+    );
 
     return;
+
+  }
+
+  if(
+    !Number.isFinite(cost) ||
+    cost <= 0
+  ){
+
+    alert(
+      "Entre un coût valide."
+    );
+
+    return;
+
   }
 
   rewards.push({
-    name:name,
-    cost:cost,
-    icon:"🎁"
+
+    name:
+      name,
+
+    cost:
+      cost,
+
+    icon:
+      "🎁"
+
   });
 
   nameInput.value = "";
+
   costInput.value = "";
 
-  save();
+  saveData();
+
+  alert(
+    "🎁 Récompense ajoutée avec succès."
+  );
+
 }
 
 /* =========================================================
-   FIN BLOC 1
-========================================================= *//* =========================================================
-   LUDO 3D CLASSIC
+   LUDO — STYLE
 ========================================================= */
 
-let ludoState = null;
-let ludoPlayersCount = 4;
-let ludoHumanColor = "green";
+function installLudoStyle(){
 
-const LUDO_COLORS = {
+  if(
+    document.getElementById(
+      "gamewin-ludo-style"
+    )
+  ){
 
-  red:{
-    name:"Rouge",
-    icon:"🔴",
-    start:0
-  },
-
-  green:{
-    name:"Vert",
-    icon:"🟢",
-    start:13
-  },
-
-  yellow:{
-    name:"Jaune",
-    icon:"🟡",
-    start:26
-  },
-
-  blue:{
-    name:"Bleu",
-    icon:"🔵",
-    start:39
-  }
-
-};
-
-/*
-  Parcours circulaire de 52 cases.
-*/
-
-const LUDO_PATH = [
-
-  [0,0],[0,1],[0,2],[0,3],[0,4],
-  [0,5],[0,6],[0,7],[0,8],[0,9],
-  [0,10],[0,11],[0,12],[0,13],
-
-  [1,13],[2,13],[3,13],[4,13],
-  [5,13],[6,13],[7,13],[8,13],
-  [9,13],[10,13],[11,13],[12,13],
-  [13,13],
-
-  [13,12],[13,11],[13,10],[13,9],
-  [13,8],[13,7],[13,6],[13,5],
-  [13,4],[13,3],[13,2],[13,1],
-  [13,0],
-
-  [12,0],[11,0],[10,0],[9,0],
-  [8,0],[7,0],[6,0],[5,0],
-  [4,0],[3,0],[2,0],[1,0]
-];
-
-const LUDO_SAFE = [
-  0,8,13,21,26,34,39,47
-];
-
-const LUDO_HOME_SPOTS = {
-
-  red:[
-    [2,2],
-    [2,4],
-    [4,2],
-    [4,4]
-  ],
-
-  green:[
-    [2,9],
-    [2,11],
-    [4,9],
-    [4,11]
-  ],
-
-  yellow:[
-    [9,9],
-    [9,11],
-    [11,9],
-    [11,11]
-  ],
-
-  blue:[
-    [9,2],
-    [9,4],
-    [11,2],
-    [11,4]
-  ]
-
-};
-
-/* =========================================================
-   STYLE 3D
-========================================================= */
-
-function installLudo3DStyle(){
-
-  if(document.getElementById("ludo3DStyle"))
     return;
+
+  }
 
   const style =
     document.createElement("style");
 
-  style.id = "ludo3DStyle";
+  style.id =
+    "gamewin-ludo-style";
 
   style.textContent = `
 
-    #ludoGame{
-      min-height:100vh;
-      padding:12px 8px 40px;
-      box-sizing:border-box;
-      background:
-        radial-gradient(
-          circle at 50% 10%,
-          #294f7b,
-          #0a1d35 50%,
-          #020812
-        );
-      color:white;
-      overflow-x:hidden;
-    }
+    .gw-ludo{
 
-    .l3d{
-      width:100%;
-      max-width:720px;
+      max-width:650px;
       margin:auto;
+      padding-bottom:30px;
+
     }
 
-    .l3d-title{
+    .gw-ludo-panel{
+
+      background:#0d1d36;
+      border:1px solid #29466e;
+      border-radius:18px;
+      padding:18px;
+      margin-bottom:16px;
+      box-shadow:0 12px 30px rgba(0,0,0,.25);
+
+    }
+
+    .gw-ludo-title{
+
       text-align:center;
-      font-size:30px;
-      font-weight:900;
-      margin:8px 0 4px;
-      text-shadow:
-        0 3px 0 #000,
-        0 7px 14px #0009;
+      font-size:28px;
+      font-weight:800;
+      margin-bottom:15px;
+
     }
 
-    .l3d-sub{
+    .gw-ludo-status{
+
       text-align:center;
-      color:#c8d9ef;
-      margin-bottom:14px;
+      font-weight:700;
+      margin:8px 0;
+
     }
 
-    .l3d-panel{
-      background:
-        linear-gradient(
-          145deg,
-          #183b62,
-          #07162a
-        );
-      border:2px solid #315b88;
-      border-radius:22px;
-      padding:12px;
-      box-shadow:
-        0 18px 35px #0009,
-        inset 0 1px #ffffff22;
-    }
+    .gw-ludo-board{
 
-    .l3d-top{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:10px;
-    }
-
-    .l3d-turn{
-      font-weight:900;
-      font-size:17px;
-    }
-
-    .l3d-dice{
-      width:62px;
-      height:62px;
-      flex-shrink:0;
-      border-radius:17px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:40px;
-      background:
-        linear-gradient(
-          145deg,
-          #ffffff,
-          #c5ced9
-        );
-      color:#111;
-      box-shadow:
-        0 6px 0 #687585,
-        0 12px 20px #0009;
-      cursor:pointer;
-      transition:.15s;
-    }
-
-    .l3d-dice:active{
-      transform:translateY(5px);
-      box-shadow:
-        0 2px 0 #687585,
-        0 6px 12px #0009;
-    }
-
-    .l3d-dice.rolling{
-      animation:ludoDiceRoll .35s infinite;
-    }
-
-    @keyframes ludoDiceRoll{
-      0%{transform:rotate(0) scale(1)}
-      25%{transform:rotate(-12deg) scale(1.08)}
-      50%{transform:rotate(12deg) scale(.96)}
-      75%{transform:rotate(-8deg) scale(1.05)}
-      100%{transform:rotate(0) scale(1)}
-    }
-
-    .l3d-board-wrap{
-      width:100%;
-      padding:7px;
-      box-sizing:border-box;
-      border-radius:22px;
-      background:
-        linear-gradient(
-          145deg,
-          #42688f,
-          #07182d
-        );
-      box-shadow:
-        0 18px 28px #000b,
-        inset 0 2px 4px #ffffff35;
-    }
-
-    #ludoBoard3D{
-      position:relative;
-      width:100%;
+      width:min(94vw,600px);
       aspect-ratio:1;
+      margin:15px auto;
       display:grid;
-      grid-template-columns:repeat(14,1fr);
-      grid-template-rows:repeat(14,1fr);
-      gap:2px;
-      padding:4px;
-      box-sizing:border-box;
-      border-radius:16px;
-      overflow:hidden;
-      background:#091a2d;
+      grid-template-columns:repeat(15,1fr);
+      grid-template-rows:repeat(15,1fr);
+      gap:1px;
+      padding:6px;
+      border-radius:20px;
+      background:#142b4b;
       box-shadow:
-        inset 0 0 18px #000b;
+        0 18px 40px rgba(0,0,0,.45),
+        inset 0 0 0 2px #38577f;
+
     }
 
-    .l3d-cell{
-      position:relative;
+    .gw-cell{
+
       min-width:0;
       min-height:0;
-      border-radius:3px;
-      box-shadow:
-        inset 1px 1px 0 #ffffff70,
-        inset -2px -2px 3px #0004;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      background:#eef2f7;
+      border-radius:2px;
+      box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);
+
     }
 
-    .l3d-empty{
-      background:#112944;
+    .gw-empty{
+
+      background:#dce3ec;
+
     }
 
-    .l3d-track{
-      background:
-        linear-gradient(
-          145deg,
-          #ffffff,
-          #ccd5df
-        );
+    .gw-path{
+
+      background:#ffffff;
+
     }
 
-    .l3d-safe{
-      background:
-        linear-gradient(
-          145deg,
-          #ffffff,
-          #d4dce5
-        );
+    .gw-red-home{
+
+      background:#e65353;
+
     }
 
-    .l3d-safe::after{
-      content:"★";
-      position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-      color:#687687;
-      font-size:clamp(9px,2.5vw,19px);
+    .gw-green-home{
+
+      background:#45bd72;
+
     }
 
-    .l3d-red-home{
-      background:
-        linear-gradient(
-          145deg,
-          #ff625b,
-          #b9130e
-        );
+    .gw-yellow-home{
+
+      background:#f1c83b;
+
     }
 
-    .l3d-green-home{
-      background:
-        linear-gradient(
-          145deg,
-          #58ef9a,
-          #07914b
-        );
+    .gw-blue-home{
+
+      background:#4c8eea;
+
     }
 
-    .l3d-yellow-home{
-      background:
-        linear-gradient(
-          145deg,
-          #fff16a,
-          #d3a300
-        );
-    }
+    .gw-center{
 
-    .l3d-blue-home{
-      background:
-        linear-gradient(
-          145deg,
-          #66aeff,
-          #1762bd
-        );
-    }
-
-    .l3d-lane-red{
-      background:#ef7770;
-    }
-
-    .l3d-lane-green{
-      background:#62d99b;
-    }
-
-    .l3d-lane-yellow{
-      background:#ffe57a;
-    }
-
-    .l3d-lane-blue{
-      background:#76b6ee;
-    }
-
-    .l3d-center{
       background:
         conic-gradient(
-          #e53935 0 25%,
-          #ffd21f 25% 50%,
-          #2f80ed 50% 75%,
-          #20c96b 75% 100%
+          #e65353 0 25%,
+          #f1c83b 25% 50%,
+          #4c8eea 50% 75%,
+          #45bd72 75% 100%
         );
+
     }
 
-    .l3d-pawn{
-      position:absolute;
-      z-index:20;
-      width:76%;
-      height:76%;
-      left:12%;
-      top:12%;
+    .gw-safe::after{
+
+      content:"★";
+      color:#26364b;
+      font-size:12px;
+
+    }
+
+    .gw-token{
+
+      width:72%;
+      height:72%;
       border-radius:50%;
-      border:2px solid #fff;
-      box-sizing:border-box;
+      border:2px solid rgba(255,255,255,.9);
       box-shadow:
-        inset 4px 4px 5px #ffffff66,
-        inset -5px -6px 7px #0008,
-        0 5px 7px #000b;
+        0 3px 6px rgba(0,0,0,.4),
+        inset 0 2px 3px rgba(255,255,255,.35);
       cursor:pointer;
-      transition:.15s;
+      position:relative;
+      z-index:5;
+
     }
 
-    .l3d-pawn::before{
-      content:"";
-      position:absolute;
-      width:38%;
-      height:22%;
-      left:16%;
-      top:12%;
-      border-radius:50%;
-      background:#ffffff88;
+    .gw-token:hover{
+
+      transform:scale(1.08);
+
     }
 
-    .l3d-pawn.red{
-      background:
-        radial-gradient(
-          circle at 35% 25%,
-          #ffaaa5,
-          #ed3028 45%,
-          #920b07
-        );
+    .gw-token-red{
+      background:#d93445;
     }
 
-    .l3d-pawn.green{
-      background:
-        radial-gradient(
-          circle at 35% 25%,
-          #b9ffda,
-          #16d875 45%,
-          #06783d
-        );
+    .gw-token-green{
+      background:#18a957;
     }
 
-    .l3d-pawn.yellow{
-      background:
-        radial-gradient(
-          circle at 35% 25%,
-          #fffbc2,
-          #ffd322 45%,
-          #a87800
-        );
+    .gw-token-yellow{
+      background:#f0b91b;
     }
 
-    .l3d-pawn.blue{
-      background:
-        radial-gradient(
-          circle at 35% 25%,
-          #c8e5ff,
-          #2188eb 45%,
-          #074d99
-        );
+    .gw-token-blue{
+      background:#2776dc;
     }
 
-    .l3d-pawn.movable{
-      animation:ludoPawnPulse .7s infinite;
-    }
+    .gw-ludo-actions{
 
-    @keyframes ludoPawnPulse{
-      50%{
-        transform:scale(1.22);
-        filter:brightness(1.35);
-      }
-    }
-
-    .l3d-info{
-      text-align:center;
-      min-height:24px;
-      padding:9px 4px;
-      color:#e7f0ff;
-      font-weight:800;
-    }
-
-    .l3d-actions{
       display:flex;
-      justify-content:center;
-      gap:9px;
+      gap:10px;
       flex-wrap:wrap;
-    }
-
-    .l3d-btn{
-      border:0;
-      border-radius:13px;
-      padding:12px 17px;
-      font-weight:900;
-      cursor:pointer;
-      background:
-        linear-gradient(
-          #ffe15a,
-          #eab600
-        );
-      color:#101b2d;
-      box-shadow:
-        0 5px 0 #967200,
-        0 9px 15px #0007;
-    }
-
-    .l3d-btn.secondary{
-      background:#f2f5f8;
-      color:#122039;
-      box-shadow:
-        0 5px 0 #8c99a8,
-        0 9px 15px #0007;
-    }
-
-    .l3d-btn:active{
-      transform:translateY(4px);
-      box-shadow:0 1px 0 #777;
-    }
-
-    .l3d-setup{
-      background:
-        linear-gradient(
-          145deg,
-          #183b62,
-          #07172c
-        );
-      border:2px solid #315b88;
-      border-radius:22px;
-      padding:22px;
-      text-align:center;
-      box-shadow:0 18px 35px #0009;
-    }
-
-    .l3d-choice{
-      display:flex;
       justify-content:center;
-      flex-wrap:wrap;
-      gap:8px;
-      margin:12px 0 18px;
+
     }
 
-    .l3d-choice button{
-      border:2px solid #4b6b91;
-      border-radius:12px;
-      padding:11px 15px;
-      background:#102a49;
-      color:#fff;
-      font-weight:900;
-      cursor:pointer;
-    }
+    .gw-ludo-select{
 
-    .l3d-choice button.active{
-      background:#ffd21f;
-      color:#111d2d;
-      border-color:#ffd21f;
-      box-shadow:0 5px 10px #0007;
-    }
-
-    .l3d-name{
       width:100%;
-      box-sizing:border-box;
-      border:2px solid #496b93;
-      border-radius:12px;
-      padding:13px;
-      margin:8px 0 12px;
-      background:#071a30;
+      padding:12px;
+      margin:6px 0;
+      border-radius:10px;
+      border:1px solid #38577f;
+      background:#102745;
       color:white;
       font-size:16px;
+
     }
 
-    .l3d-winner{
-      text-align:center;
-      padding:15px;
-      margin-top:10px;
-      border-radius:15px;
-      background:#f4c842;
-      color:#111b2c;
-      font-size:20px;
-      font-weight:1000;
+    .gw-player-list{
+
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin-top:12px;
+
     }
 
-    @media(max-width:420px){
+    .gw-player{
 
-      .l3d-panel{
-        padding:8px;
+      padding:10px;
+      border-radius:10px;
+      background:#132b4b;
+      border:1px solid #29466e;
+
+    }
+
+    @media(max-width:500px){
+
+      .gw-ludo-board{
+
+        width:96vw;
+        padding:3px;
+
       }
 
-      .l3d-title{
-        font-size:25px;
-      }
+      .gw-player-list{
 
-      .l3d-turn{
-        font-size:14px;
-      }
+        grid-template-columns:1fr;
 
-      .l3d-dice{
-        width:54px;
-        height:54px;
-        font-size:34px;
       }
 
     }
@@ -1262,314 +1536,365 @@ function installLudo3DStyle(){
   `;
 
   document.head.appendChild(style);
+
 }
 
 /* =========================================================
-   CRÉATION DE LA PARTIE
+   LUDO — DONNÉES
 ========================================================= */
 
-function ludoCreateState(){
+const LUDO_COLORS = [
+  "red",
+  "green",
+  "yellow",
+  "blue"
+];
 
-  const allColors =
-    ["red","green","yellow","blue"];
+const LUDO_NAMES = {
+  red: "Rouge",
+  green: "Vert",
+  yellow: "Jaune",
+  blue: "Bleu"
+};
 
-  let colors =
-    allColors.slice(0,ludoPlayersCount);
+const LUDO_START = {
+  red: 0,
+  green: 13,
+  yellow: 26,
+  blue: 39
+};
 
-  /*
-    La couleur choisie par le joueur
-    est toujours présente.
-  */
+/*
+   52 cases autour du plateau.
+*/
 
-  if(!colors.includes(ludoHumanColor)){
+const LUDO_PATH = [
 
-    colors[0] = ludoHumanColor;
-  }
+  [6,0],[6,1],[6,2],[6,3],[6,4],[6,5],
+  [5,6],[4,6],[3,6],[2,6],[1,6],[0,6],
+  [0,7],
+  [0,8],[1,8],[2,8],[3,8],[4,8],[5,8],
+  [6,9],[6,10],[6,11],[6,12],[6,13],[6,14],
+  [7,14],
+  [8,14],[8,13],[8,12],[8,11],[8,10],[8,9],
+  [9,8],[10,8],[11,8],[12,8],[13,8],[14,8],
+  [14,7],
+  [14,6],[13,6],[12,6],[11,6],[10,6],[9,6],
+  [8,5],[8,4],[8,3],[8,2],[8,1],[8,0],
+  [7,0]
 
-  ludoState = {
+];
 
-    players:colors.map(
-      (color,index) => ({
+const LUDO_HOME_SPOTS = {
 
-        color:color,
+  red: [
+    [1,1],
+    [1,4],
+    [4,1],
+    [4,4]
+  ],
 
-        name:
-          color === ludoHumanColor
-          ? (
-              player.name === "Visiteur"
-              ? "Joueur"
-              : player.name
-            )
-          : "CPU " + (index+1),
+  green: [
+    [1,10],
+    [1,13],
+    [4,10],
+    [4,13]
+  ],
 
-        human:
-          color === ludoHumanColor,
+  yellow: [
+    [10,10],
+    [10,13],
+    [13,10],
+    [13,13]
+  ],
 
-        tokens:[
-          -1,
-          -1,
-          -1,
-          -1
-        ]
+  blue: [
+    [10,1],
+    [10,4],
+    [13,1],
+    [13,4]
+  ]
 
-      })
-    ),
+};
+
+let ludoState = null;
+
+/* =========================================================
+   FIN BLOC 2
+========================================================= *//* =========================================================
+   LUDO — CRÉATION
+========================================================= */
+
+function createLudoState(){
+
+  return {
+
+    started:false,
+
+    players:[
+      {
+        color:"red",
+        name:"Toi",
+        human:true
+      },
+      {
+        color:"green",
+        name:"CPU Vert",
+        human:false
+      },
+      {
+        color:"yellow",
+        name:"CPU Jaune",
+        human:false
+      },
+      {
+        color:"blue",
+        name:"CPU Bleu",
+        human:false
+      }
+    ],
 
     turn:0,
 
     dice:0,
 
-    rolling:false,
+    tokens:{
 
-    winner:null,
+      red:[-1,-1,-1,-1],
+      green:[-1,-1,-1,-1],
+      yellow:[-1,-1,-1,-1],
+      blue:[-1,-1,-1,-1]
 
-    message:"Lance le dé pour commencer !"
+    },
+
+    message:
+      "Lance le dé pour commencer."
 
   };
+
 }
 
 /* =========================================================
-   ÉCRAN DE CONFIGURATION
+   LUDO — DÉMARRAGE
 ========================================================= */
 
-function ludoSetupHTML(){
+function startLudo(){
 
-  let html = `
+  installLudoStyle();
 
-    <div class="l3d-setup">
+  ludoState =
+    createLudoState();
 
-      <div class="l3d-title">
-        🎲 LUDO 3D
+  showPage("ludoGame");
+
+  renderLudo();
+
+}
+
+/* =========================================================
+   LUDO — RENDU
+========================================================= */
+
+function renderLudo(){
+
+  installLudoStyle();
+
+  const section =
+    document.getElementById(
+      "ludoGame"
+    );
+
+  if(!section){
+
+    return;
+
+  }
+
+  if(!ludoState){
+
+    ludoState =
+      createLudoState();
+
+  }
+
+  section.innerHTML = `
+
+    <div class="gw-ludo">
+
+      <div class="gw-ludo-panel">
+
+        <div class="gw-ludo-title">
+          🎲 LUDO CLASSIC
+        </div>
+
+        <div class="gw-ludo-status">
+          ${
+            ludoState.players[
+              ludoState.turn
+            ].name
+          }
+          —
+          ${LUDO_NAMES[
+            ludoState.players[
+              ludoState.turn
+            ].color
+          ]}
+        </div>
+
+        <div
+          style="
+            text-align:center;
+            font-size:52px;
+          "
+        >
+          ${
+            ludoState.dice
+            ? diceFace(ludoState.dice)
+            : "🎲"
+          }
+        </div>
+
+        <p
+          style="text-align:center"
+        >
+          ${ludoState.message}
+        </p>
+
+        <div class="gw-ludo-actions">
+
+          <button
+            class="primary"
+            onclick="ludoRoll()"
+            ${
+              !ludoState.players[
+                ludoState.turn
+              ].human
+              ? "disabled"
+              : ""
+            }
+          >
+            🎲 Lancer le dé
+          </button>
+
+          <button
+            class="primary"
+            onclick="ludoNewGame()"
+          >
+            🔄 Nouvelle partie
+          </button>
+
+          <button
+            class="primary"
+            onclick="showPage('games')"
+          >
+            ← Jeux
+          </button>
+
+        </div>
+
       </div>
 
-      <p class="l3d-sub">
-        Mode classique
-      </p>
+      <div
+        id="gwLudoBoard"
+        class="gw-ludo-board"
+      ></div>
 
-      <strong>
-        Nombre de joueurs
-      </strong>
+      <div class="gw-ludo-panel">
 
-      <div class="l3d-choice">
-  `;
+        <strong>
+          Joueurs
+        </strong>
 
-  [2,3,4].forEach(n => {
+        <div class="gw-player-list">
 
-    html += `
+          ${
+            ludoState.players.map(
+              (p, i) => `
+                <div class="gw-player">
 
-      <button
-        class="${ludoPlayersCount === n ? "active" : ""}"
-        onclick="ludoPlayersCount=${n};renderLudo()">
+                  ${colorDot(p.color)}
 
-        ${n} joueurs
+                  <strong>
+                    ${p.name}
+                  </strong>
 
-      </button>
+                  ${
+                    i === ludoState.turn
+                    ? " 👈"
+                    : ""
+                  }
 
-    `;
+                  <br>
 
-  });
+                  <small>
+                    Pions :
+                    ${
+                      ludoState.tokens[
+                        p.color
+                      ].filter(
+                        x => x >= 0
+                      ).length
+                    } / 4
+                  </small>
 
-  html += `
+                </div>
+              `
+            ).join("")
+          }
 
-      </div>
-
-      <strong>
-        Choisis ta couleur
-      </strong>
-
-      <div class="l3d-choice">
-  `;
-
-  Object.keys(LUDO_COLORS)
-    .forEach(color => {
-
-      html += `
-
-        <button
-          class="${ludoHumanColor === color ? "active" : ""}"
-          onclick="ludoHumanColor='${color}';renderLudo()">
-
-          ${LUDO_COLORS[color].icon}
-          ${LUDO_COLORS[color].name}
-
-        </button>
-
-      `;
-
-    });
-
-  html += `
+        </div>
 
       </div>
-
-      <input
-        id="ludoPlayerName"
-        class="l3d-name"
-        placeholder="Ton nom (optionnel)"
-        value="${
-          player.name === "Visiteur"
-          ? ""
-          : player.name
-        }"
-      >
-
-      <button
-        class="l3d-btn"
-        onclick="startLudoGame()">
-
-        ▶ Commencer la partie
-
-      </button>
 
     </div>
 
   `;
 
-  return html;
+  drawLudoBoard();
+
 }
 
 /* =========================================================
-   START LUDO
+   LUDO — COULEUR
 ========================================================= */
 
-function startLudo(){
+function colorDot(color){
 
-  installLudo3DStyle();
+  return `
+    <span
+      style="
+        display:inline-block;
+        width:13px;
+        height:13px;
+        border-radius:50%;
+        margin-right:6px;
+        background:${tokenColor(color)};
+      "
+    ></span>
+  `;
 
-  ludoState = null;
-
-  showPage("ludoGame");
-
-  renderLudo();
 }
 
-function startLudoGame(){
+function tokenColor(color){
 
-  const input =
-    document.getElementById("ludoPlayerName");
+  const colors = {
 
-  if(input){
+    red:"#d93445",
+    green:"#18a957",
+    yellow:"#f0b91b",
+    blue:"#2776dc"
 
-    const name =
-      input.value.trim();
+  };
 
-    if(name){
+  return colors[color] || "#fff";
 
-      player.name = name;
-
-      localStorage.player =
-        JSON.stringify(player);
-    }
-  }
-
-  ludoCreateState();
-
-  renderLudo();
 }
 
 /* =========================================================
-   FIN BLOC 2
-========================================================= *//* =========================================================
-   LUDO — FONCTIONS DE JEU
+   LUDO — DÉ
 ========================================================= */
 
-function ludoCurrentPlayer(){
-
-  if(!ludoState)
-    return null;
-
-  return ludoState.players[
-    ludoState.turn
-  ];
-}
-
-function ludoAbsolutePosition(
-  playerData,
-  position
-){
-
-  return (
-    LUDO_COLORS[playerData.color].start +
-    position
-  ) % 52;
-}
-
-/* =========================================================
-   PIONS JOUABLES
-========================================================= */
-
-function ludoMovableTokens(
-  playerData,
-  dice
-){
-
-  const result = [];
-
-  if(!playerData || !dice)
-    return result;
-
-  playerData.tokens.forEach(
-    (position,index) => {
-
-      /*
-        Maison → sortie avec 6.
-      */
-
-      if(position === -1){
-
-        if(dice === 6)
-          result.push(index);
-
-        return;
-      }
-
-      /*
-        Arrivée exacte.
-      */
-
-      if(position + dice <= 52){
-
-        result.push(index);
-      }
-
-    }
-  );
-
-  return result;
-}
-
-/* =========================================================
-   LANCER DU DÉ
-========================================================= */
-
-function ludoRoll(){
-
-  if(!ludoState)
-    return;
-
-  if(ludoState.winner)
-    return;
-
-  if(ludoState.rolling)
-    return;
-
-  const current =
-    ludoCurrentPlayer();
-
-  if(!current)
-    return;
-
-  /*
-    Le joueur humain lance
-    uniquement pendant son tour.
-  */
-
-  if(!current.human)
-    return;
-
-  ludoState.rolling = true;
-
-  let count = 0;
+function diceFace(number){
 
   const faces = [
     "",
@@ -1581,208 +1906,207 @@ function ludoRoll(){
     "⚅"
   ];
 
-  const animation =
-    setInterval(() => {
+  return faces[number] || "🎲";
 
-      ludoState.dice =
-        1 +
-        Math.floor(
-          Math.random()*6
-        );
+}
 
-      renderLudo();
+function ludoRoll(){
 
-      const die =
-        document.getElementById("ludoDie");
+  if(!ludoState){
 
-      if(die)
-        die.classList.add("rolling");
+    return;
 
-      count++;
+  }
 
-      if(count >= 9){
+  const current =
+    ludoState.players[
+      ludoState.turn
+    ];
 
-        clearInterval(animation);
+  if(!current.human){
 
-        ludoState.rolling = false;
+    return;
 
-        const playerData =
-          ludoCurrentPlayer();
+  }
 
-        const possible =
-          ludoMovableTokens(
-            playerData,
-            ludoState.dice
-          );
+  const dice =
+    Math.floor(
+      Math.random() * 6
+    ) + 1;
 
-        if(!possible.length){
+  ludoState.dice =
+    dice;
 
-          const rolled =
-            ludoState.dice;
+  const color =
+    current.color;
 
-          ludoState.message =
-            "Aucun pion ne peut avancer.";
+  const tokens =
+    ludoState.tokens[color];
 
-          renderLudo();
+  const movable =
+    tokens.some(
+      position =>
+        position === -1
+        ? dice === 6
+        : position + dice <= 57
+    );
 
-          setTimeout(() => {
+  if(!movable){
 
-            ludoState.dice = 0;
+    ludoState.message =
+      "Aucun pion ne peut avancer.";
 
-            if(rolled === 6){
+    renderLudo();
 
-              ludoState.message =
-                "🎲 Tu rejoues !";
+    setTimeout(
+      ludoNextTurn,
+      700
+    );
 
-              renderLudo();
+    return;
 
-            }else{
+  }
 
-              ludoNextTurn();
+  ludoState.message =
+    "Choisis un pion à déplacer.";
 
-            }
+  renderLudo();
 
-          },800);
-
-        }else{
-
-          ludoState.message =
-            possible.length === 1
-            ? "Clique sur ton pion possible."
-            : "Choisis le pion à déplacer.";
-
-          renderLudo();
-
-        }
-
-      }
-
-    },90);
 }
 
 /* =========================================================
-   DÉPLACEMENT D'UN PION
+   LUDO — DÉPLACEMENT
 ========================================================= */
 
-function ludoMoveToken(index){
+function ludoMoveToken(
+  color,
+  tokenIndex
+){
 
-  if(!ludoState)
+  if(!ludoState){
+
     return;
 
-  if(ludoState.winner)
-    return;
-
-  if(ludoState.rolling)
-    return;
+  }
 
   const current =
-    ludoCurrentPlayer();
+    ludoState.players[
+      ludoState.turn
+    ];
 
-  if(!current)
+  if(!current.human){
+
     return;
 
-  if(!current.human)
+  }
+
+  if(current.color !== color){
+
     return;
+
+  }
 
   const dice =
     ludoState.dice;
 
-  const possible =
-    ludoMovableTokens(
-      current,
-      dice
-    );
+  if(!dice){
 
-  if(!possible.includes(index))
     return;
-
-  const oldPosition =
-    current.tokens[index];
-
-  /*
-    Sortie de maison.
-  */
-
-  if(oldPosition === -1){
-
-    current.tokens[index] = 0;
-
-  }else{
-
-    current.tokens[index] += dice;
 
   }
 
-  /*
-    Capture.
-  */
+  const tokens =
+    ludoState.tokens[color];
 
-  ludoCapture(
-    current,
-    index
+  let position =
+    tokens[tokenIndex];
+
+  if(position === -1){
+
+    if(dice !== 6){
+
+      ludoState.message =
+        "Il faut faire 6 pour sortir un pion.";
+
+      renderLudo();
+
+      return;
+
+    }
+
+    position = 0;
+
+  }else{
+
+    if(
+      position + dice > 57
+    ){
+
+      ludoState.message =
+        "Ce pion ne peut pas avancer.";
+
+      renderLudo();
+
+      return;
+
+    }
+
+    position += dice;
+
+  }
+
+  tokens[tokenIndex] =
+    position;
+
+  captureOpponents(
+    color,
+    position
   );
 
-  /*
-    Vérification victoire.
-  */
+  ludoState.dice = 0;
 
   if(
-    current.tokens.every(
-      position => position === 52
+    tokens.every(
+      p => p === 57
     )
   ){
 
-    ludoState.winner =
-      current;
-
-    ludoState.message =
-      "🏆 Tu as gagné !";
-
     player.points += 100;
 
-    save();
+    saveData();
+
+    ludoState.message =
+      "🏆 VICTOIRE ! +100 points !";
 
     renderLudo();
 
     return;
+
   }
 
-  /*
-    Un 6 = tour supplémentaire.
-  */
-
   if(dice === 6){
-
-    ludoState.dice = 0;
 
     ludoState.message =
       "🎲 6 ! Tu rejoues.";
 
     renderLudo();
 
-  }else{
-
-    ludoNextTurn();
+    return;
 
   }
+
+  ludoNextTurn();
+
 }
 
 /* =========================================================
-   CAPTURE
+   LUDO — CAPTURE
 ========================================================= */
 
-function ludoCapture(
-  movingPlayer,
-  tokenIndex
+function captureOpponents(
+  color,
+  position
 ){
-
-  const position =
-    movingPlayer.tokens[tokenIndex];
-
-  /*
-    Maison ou arrivée :
-    pas de capture.
-  */
 
   if(
     position < 0 ||
@@ -1790,74 +2114,89 @@ function ludoCapture(
   ){
 
     return;
+
   }
 
-  const absolute =
-    ludoAbsolutePosition(
-      movingPlayer,
+  const globalPosition =
+    (
+      LUDO_START[color] +
       position
-    );
+    ) % 52;
 
-  /*
-    Cases étoiles protégées.
-  */
+  const safe = [
+    0,
+    8,
+    13,
+    21,
+    26,
+    34,
+    39,
+    47
+  ];
 
   if(
-    LUDO_SAFE.includes(absolute)
+    safe.includes(
+      globalPosition
+    )
   ){
 
     return;
+
   }
 
-  ludoState.players.forEach(
-    otherPlayer => {
+  LUDO_COLORS.forEach(
+    otherColor => {
 
-      if(
-        otherPlayer === movingPlayer
-      ){
+      if(otherColor === color){
 
         return;
+
       }
 
-      otherPlayer.tokens =
-        otherPlayer.tokens.map(
-          otherPosition => {
+      ludoState.tokens[
+        otherColor
+      ].forEach(
+        (otherPosition, index) => {
+
+          if(
+            otherPosition >= 0 &&
+            otherPosition < 52
+          ){
+
+            const otherGlobal =
+              (
+                LUDO_START[
+                  otherColor
+                ] +
+                otherPosition
+              ) % 52;
 
             if(
-              otherPosition >= 0 &&
-              otherPosition < 52
+              otherGlobal ===
+              globalPosition
             ){
 
-              const otherAbsolute =
-                ludoAbsolutePosition(
-                  otherPlayer,
-                  otherPosition
-                );
+              ludoState.tokens[
+                otherColor
+              ][index] = -1;
 
-              if(
-                otherAbsolute === absolute
-              ){
-
-                return -1;
-              }
             }
 
-            return otherPosition;
           }
-        );
+
+        }
+      );
 
     }
   );
+
 }
 
 /* =========================================================
-   TOUR SUIVANT
+   LUDO — TOUR SUIVANT
 ========================================================= */
 
 function ludoNextTurn(){
-
-  if(!ludoState)
-    return;
 
   ludoState.turn =
     (
@@ -1867,15 +2206,14 @@ function ludoNextTurn(){
 
   ludoState.dice = 0;
 
-  ludoState.rolling = false;
-
   const current =
-    ludoCurrentPlayer();
+    ludoState.players[
+      ludoState.turn
+    ];
 
   ludoState.message =
-    current.human
-    ? "À toi de jouer !"
-    : "🤖 Le CPU joue...";
+    current.name +
+    " joue.";
 
   renderLudo();
 
@@ -1883,675 +2221,487 @@ function ludoNextTurn(){
 
     setTimeout(
       ludoCpuTurn,
-      700
+      800
     );
+
   }
+
 }
 
 /* =========================================================
-   CPU
+   LUDO — CPU
 ========================================================= */
 
 function ludoCpuTurn(){
 
-  if(!ludoState)
+  if(!ludoState){
+
     return;
 
-  if(ludoState.winner)
+  }
+
+  const current =
+    ludoState.players[
+      ludoState.turn
+    ];
+
+  if(current.human){
+
     return;
 
-  const cpu =
-    ludoCurrentPlayer();
+  }
 
-  if(!cpu || cpu.human)
-    return;
+  const dice =
+    Math.floor(
+      Math.random() * 6
+    ) + 1;
 
-  ludoState.rolling = true;
+  ludoState.dice =
+    dice;
 
-  renderLudo();
+  const tokens =
+    ludoState.tokens[
+      current.color
+    ];
 
-  setTimeout(() => {
+  let choices = [];
 
-    const dice =
-      1 +
-      Math.floor(
-        Math.random()*6
-      );
+  tokens.forEach(
+    (position, index) => {
 
-    ludoState.dice = dice;
-
-    ludoState.rolling = false;
-
-    const possible =
-      ludoMovableTokens(
-        cpu,
-        dice
-      );
-
-    /*
-      Aucun mouvement.
-    */
-
-    if(!possible.length){
-
-      ludoState.message =
-        "🤖 Aucun mouvement possible.";
-
-      renderLudo();
-
-      setTimeout(() => {
-
-        ludoState.dice = 0;
+      if(position === -1){
 
         if(dice === 6){
 
-          ludoState.message =
-            "🤖 Le CPU rejoue.";
-
-          renderLudo();
-
-          setTimeout(
-            ludoCpuTurn,
-            600
-          );
-
-        }else{
-
-          ludoNextTurn();
+          choices.push(index);
 
         }
 
-      },700);
+      }else if(
+        position + dice <= 57
+      ){
 
-      return;
-    }
+        choices.push(index);
 
-    /*
-      Intelligence simple du CPU :
-      1. terminer un pion
-      2. sortir un pion avec 6
-      3. avancer le pion le plus loin
-    */
-
-    let chosen =
-      possible.find(
-        index =>
-          cpu.tokens[index] >= 0 &&
-          cpu.tokens[index] + dice === 52
-      );
-
-    if(chosen === undefined){
-
-      chosen =
-        possible.find(
-          index =>
-            cpu.tokens[index] === -1 &&
-            dice === 6
-        );
+      }
 
     }
+  );
 
-    if(chosen === undefined){
+  if(
+    choices.length === 0
+  ){
 
-      chosen =
-        possible.reduce(
-          (best,index) => {
+    ludoState.message =
+      current.name +
+      " ne peut pas jouer.";
 
-            const current =
-              cpu.tokens[index];
+    renderLudo();
 
-            const bestValue =
-              cpu.tokens[best];
-
-            if(current > bestValue)
-              return index;
-
-            return best;
-
-          },
-          possible[0]
-        );
-
-    }
-
-    /*
-      Déplacement CPU.
-    */
-
-    if(cpu.tokens[chosen] === -1){
-
-      cpu.tokens[chosen] = 0;
-
-    }else{
-
-      cpu.tokens[chosen] += dice;
-
-    }
-
-    /*
-      Capture.
-    */
-
-    ludoCapture(
-      cpu,
-      chosen
+    setTimeout(
+      ludoNextTurn,
+      700
     );
 
-    /*
-      Victoire CPU.
-    */
+    return;
 
-    if(
-      cpu.tokens.every(
-        position => position === 52
+  }
+
+  const choice =
+    choices[
+      Math.floor(
+        Math.random() *
+        choices.length
       )
-    ){
+    ];
 
-      ludoState.winner =
-        cpu;
+  let position =
+    tokens[choice];
 
-      ludoState.message =
-        "🤖 " +
-        cpu.name +
-        " a gagné !";
+  if(position === -1){
 
-      renderLudo();
+    position = 0;
 
-      return;
-    }
+  }else{
 
-    /*
-      6 = rejouer.
-    */
+    position += dice;
 
-    if(dice === 6){
+  }
 
-      ludoState.dice = 0;
+  tokens[choice] =
+    position;
 
-      ludoState.message =
-        "🤖 6 ! Le CPU rejoue.";
+  captureOpponents(
+    current.color,
+    position
+  );
 
-      renderLudo();
+  if(
+    tokens.every(
+      p => p === 57
+    )
+  ){
 
-      setTimeout(
-        ludoCpuTurn,
-        700
-      );
+    ludoState.message =
+      "🏆 " +
+      current.name +
+      " a gagné !";
 
-    }else{
+    renderLudo();
 
-      ludoNextTurn();
+    return;
 
-    }
+  }
 
-  },800);
+  if(dice === 6){
+
+    ludoState.message =
+      current.name +
+      " a fait 6 et rejoue.";
+
+    renderLudo();
+
+    setTimeout(
+      ludoCpuTurn,
+      900
+    );
+
+    return;
+
+  }
+
+  ludoNextTurn();
+
 }
 
 /* =========================================================
-   NOUVELLE PARTIE
+   LUDO — NOUVELLE PARTIE
 ========================================================= */
 
 function ludoNewGame(){
 
-  ludoState = null;
+  ludoState =
+    createLudoState();
+
+  showPage("ludoGame");
 
   renderLudo();
+
 }
 
 /* =========================================================
-   CRÉATION DU PLATEAU
+   LUDO — PLATEAU
 ========================================================= */
 
-function ludoBuildBoard(){
+function drawLudoBoard(){
 
-  let html =
-    '<div class="l3d-board-wrap">' +
-    '<div id="ludoBoard3D">';
+  const board =
+    document.getElementById(
+      "gwLudoBoard"
+    );
 
-  for(let row=0;row<14;row++){
+  if(!board){
 
-    for(let col=0;col<14;col++){
+    return;
 
-      let className =
-        "l3d-cell l3d-empty";
+  }
 
-      /*
-        Parcours
-      */
+  board.innerHTML = "";
+
+  for(
+    let row = 0;
+    row < 15;
+    row++
+  ){
+
+    for(
+      let col = 0;
+      col < 15;
+      col++
+    ){
+
+      const cell =
+        document.createElement(
+          "div"
+        );
+
+      cell.className =
+        "gw-cell " +
+        getCellClass(row,col);
 
       const pathIndex =
         LUDO_PATH.findIndex(
-          position =>
-            position[0] === row &&
-            position[1] === col
+          p =>
+            p[0] === row &&
+            p[1] === col
         );
 
       if(pathIndex >= 0){
 
-        className =
-          "l3d-cell l3d-track";
-
-        if(
-          LUDO_SAFE.includes(pathIndex)
-        ){
-
-          className +=
-            " l3d-safe";
-        }
+        cell.dataset.path =
+          pathIndex;
 
       }
 
       /*
-        Maisons colorées.
+         Pions placés dans leur maison
+         ou sur le parcours.
       */
 
-      if(
-        row <= 5 &&
-        col <= 5 &&
-        pathIndex < 0
-      ){
+      placeTokenInCell(
+        cell,
+        row,
+        col
+      );
 
-        className =
-          "l3d-cell l3d-red-home";
-      }
-
-      if(
-        row <= 5 &&
-        col >= 8 &&
-        pathIndex < 0
-      ){
-
-        className =
-          "l3d-cell l3d-green-home";
-      }
-
-      if(
-        row >= 8 &&
-        col <= 5 &&
-        pathIndex < 0
-      ){
-
-        className =
-          "l3d-cell l3d-blue-home";
-      }
-
-      if(
-        row >= 8 &&
-        col >= 8 &&
-        pathIndex < 0
-      ){
-
-        className =
-          "l3d-cell l3d-yellow-home";
-      }
-
-      /*
-        Centre.
-      */
-
-      if(
-        row >= 6 &&
-        row <= 7 &&
-        col >= 6 &&
-        col <= 7
-      ){
-
-        className =
-          "l3d-cell l3d-center";
-      }
-
-      html +=
-        `<div
-          class="${className}"
-          data-row="${row}"
-          data-col="${col}"
-          data-path="${pathIndex}">
-        </div>`;
+      board.appendChild(cell);
 
     }
 
   }
 
-  html +=
-    "</div></div>";
-
-  return html;
 }
 
 /* =========================================================
-   POSITION D'UN PION
+   LUDO — COULEUR DES CASES
 ========================================================= */
 
-function ludoPlacePawn(
-  playerData,
-  tokenIndex,
-  html
+function getCellClass(
+  row,
+  col
 ){
 
-  const position =
-    playerData.tokens[tokenIndex];
-
   /*
-    Pion dans la maison.
+     Maisons 6x6
   */
 
-  if(position === -1){
+  if(
+    row <= 5 &&
+    col <= 5
+  ){
 
-    const spot =
-      LUDO_HOME_SPOTS[
-        playerData.color
-      ][tokenIndex];
+    return "gw-red-home";
 
-    return html.replace(
-      `data-row="${spot[0]}" data-col="${spot[1]}"`,
-      `data-row="${spot[0]}" data-col="${spot[1]}"`
-    );
+  }
+
+  if(
+    row <= 5 &&
+    col >= 9
+  ){
+
+    return "gw-green-home";
+
+  }
+
+  if(
+    row >= 9 &&
+    col >= 9
+  ){
+
+    return "gw-yellow-home";
+
+  }
+
+  if(
+    row >= 9 &&
+    col <= 5
+  ){
+
+    return "gw-blue-home";
+
   }
 
   /*
-    Pion arrivé.
+     Centre
   */
 
-  if(position === 52){
+  if(
+    row >= 6 &&
+    row <= 8 &&
+    col >= 6 &&
+    col <= 8
+  ){
 
-    return html;
+    return "gw-center";
+
   }
 
-  /*
-    Pion sur le parcours.
-  */
-
-  const absolute =
-    ludoAbsolutePosition(
-      playerData,
-      position
+  const path =
+    LUDO_PATH.findIndex(
+      p =>
+        p[0] === row &&
+        p[1] === col
     );
 
-  const spot =
-    LUDO_PATH[absolute];
+  if(path >= 0){
 
-  return html;
+    const safe =
+      [
+        0,
+        8,
+        13,
+        21,
+        26,
+        34,
+        39,
+        47
+      ];
+
+    if(
+      safe.includes(path)
+    ){
+
+      return "gw-path gw-safe";
+
+    }
+
+    return "gw-path";
+
+  }
+
+  return "gw-empty";
+
 }
 
 /* =========================================================
-   DESSIN DES PIONS
+   LUDO — PIONS
 ========================================================= */
 
-function ludoDrawPawns(){
-
-  const board =
-    document.getElementById("ludoBoard3D");
-
-  if(!board || !ludoState)
-    return;
+function placeTokenInCell(
+  cell,
+  row,
+  col
+){
 
   /*
-    Supprime les anciens pions.
+     Pions encore dans leur maison.
   */
 
-  board
-    .querySelectorAll(".l3d-pawn")
-    .forEach(
-      pawn => pawn.remove()
-    );
+  for(
+    const color of LUDO_COLORS
+  ){
 
-  ludoState.players.forEach(
-    (playerData,playerIndex) => {
+    const spots =
+      LUDO_HOME_SPOTS[color];
 
-      playerData.tokens.forEach(
-        (position,tokenIndex) => {
+    spots.forEach(
+      (spot, index) => {
 
-          let row;
-          let col;
+        if(
+          spot[0] === row &&
+          spot[1] === col
+        ){
+
+          const position =
+            ludoState.tokens[
+              color
+            ][index];
 
           if(position === -1){
 
-            const spot =
-              LUDO_HOME_SPOTS[
-                playerData.color
-              ][tokenIndex];
-
-            row = spot[0];
-            col = spot[1];
-
-          }else if(position === 52){
-
-            /*
-              Les pions arrivés vont
-              visuellement au centre.
-            */
-
-            row = 6;
-            col = 6;
-
-          }else{
-
-            const absolute =
-              ludoAbsolutePosition(
-                playerData,
-                position
-              );
-
-            const spot =
-              LUDO_PATH[absolute];
-
-            row = spot[0];
-            col = spot[1];
-          }
-
-          const cell =
-            board.querySelector(
-              `[data-row="${row}"][data-col="${col}"]`
+            addToken(
+              cell,
+              color,
+              index
             );
 
-          if(!cell)
-            return;
-
-          const pawn =
-            document.createElement("div");
-
-          pawn.className =
-            "l3d-pawn " +
-            playerData.color;
-
-          /*
-            Plusieurs pions sur une même case :
-            léger décalage.
-          */
-
-          const offset =
-            tokenIndex * 5;
-
-          pawn.style.transform =
-            `translate(${offset/2}px,${offset/2}px)`;
-
-          /*
-            Pion jouable.
-          */
-
-          if(
-            playerData.human &&
-            playerIndex === ludoState.turn &&
-            !ludoState.winner &&
-            !ludoState.rolling &&
-            ludoState.dice > 0 &&
-            ludoMovableTokens(
-              playerData,
-              ludoState.dice
-            ).includes(tokenIndex)
-          ){
-
-            pawn.classList.add(
-              "movable"
-            );
-
-            pawn.onclick = () => {
-
-              ludoMoveToken(
-                tokenIndex
-              );
-
-            };
           }
-
-          cell.appendChild(pawn);
 
         }
-      );
 
-    }
-  );
-}
+      }
+    );
 
-/* =========================================================
-   AFFICHAGE FINAL DU LUDO
-========================================================= */
-
-function renderLudo(){
-
-  installLudo3DStyle();
-
-  const box =
-    document.getElementById("ludoGame");
-
-  if(!box)
-    return;
-
-  /*
-    Configuration avant partie.
-  */
-
-  if(!ludoState){
-
-    box.innerHTML =
-      ludoSetupHTML();
-
-    return;
   }
 
-  const current =
-    ludoCurrentPlayer();
-
-  const faces = [
-    "",
-    "⚀",
-    "⚁",
-    "⚂",
-    "⚃",
-    "⚄",
-    "⚅"
-  ];
-
-  let html = `
-
-    <div class="l3d">
-
-      <div class="l3d-title">
-        🎲 LUDO 3D
-      </div>
-
-      <div class="l3d-sub">
-        Mode classique •
-        ${ludoState.players.length} joueurs
-      </div>
-
-      <div class="l3d-panel">
-
-        <div class="l3d-top">
-
-          <div class="l3d-turn">
-
-            ${
-              current.human
-              ? "🧑 Ton tour"
-              : "🤖 " + current.name
-            }
-
-            ${LUDO_COLORS[current.color].icon}
-
-          </div>
-
-          <div
-            id="ludoDie"
-            class="l3d-dice ${
-              ludoState.rolling
-              ? "rolling"
-              : ""
-            }"
-            onclick="ludoRoll()">
-
-            ${
-              ludoState.dice
-              ? faces[ludoState.dice]
-              : "🎲"
-            }
-
-          </div>
-
-        </div>
-
-        ${ludoBuildBoard()}
-
-        <div class="l3d-info">
-
-          ${ludoState.message}
-
-        </div>
-
-        <div class="l3d-actions">
-
-          <button
-            class="l3d-btn"
-            onclick="ludoRoll()">
-
-            🎲 Lancer le dé
-
-          </button>
-
-          <button
-            class="l3d-btn secondary"
-            onclick="ludoNewGame()">
-
-            ↻ Nouvelle partie
-
-          </button>
-
-        </div>
-
-        ${
-          ludoState.winner
-          ? `
-            <div class="l3d-winner">
-
-              🏆
-              ${ludoState.winner.name}
-              gagne !
-
-              ${
-                ludoState.winner.human
-                ? "<br>+100 points 🎉"
-                : ""
-              }
-
-            </div>
-          `
-          : ""
-        }
-
-      </div>
-
-    </div>
-
-  `;
-
-  box.innerHTML = html;
-
   /*
-    Les pions sont dessinés après
-    la création du plateau.
+     Pions sur le parcours.
   */
 
-  ludoDrawPawns();
+  for(
+    const color of LUDO_COLORS
+  ){
+
+    ludoState.tokens[
+      color
+    ].forEach(
+      (position, index) => {
+
+        if(
+          position < 0 ||
+          position >= 52
+        ){
+
+          return;
+
+        }
+
+        const pathIndex =
+          (
+            LUDO_START[color] +
+            position
+          ) % 52;
+
+        const path =
+          LUDO_PATH[
+            pathIndex
+          ];
+
+        if(
+          path &&
+          path[0] === row &&
+          path[1] === col
+        ){
+
+          addToken(
+            cell,
+            color,
+            index
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+}
+
+function addToken(
+  cell,
+  color,
+  index
+){
+
+  const token =
+    document.createElement(
+      "div"
+    );
+
+  token.className =
+    "gw-token gw-token-" +
+    color;
+
+  token.title =
+    LUDO_NAMES[color] +
+    " — pion " +
+    (index + 1);
+
+  token.onclick =
+    function(){
+
+      ludoMoveToken(
+        color,
+        index
+      );
+
+    };
+
+  cell.appendChild(
+    token
+  );
+
 }
 
 /* =========================================================
@@ -2560,33 +2710,74 @@ function renderLudo(){
 
 function initGameWin(){
 
+  /*
+     On branche les boutons
+     du menu.
+  */
+
   document
-    .querySelectorAll("nav button[data-page]")
-    .forEach(button => {
+    .querySelectorAll(
+      "nav button[data-page]"
+    )
+    .forEach(
+      button => {
 
-      button.addEventListener(
-        "click",
-        () => showPage(button.dataset.page)
-      );
+        button.addEventListener(
+          "click",
+          function(){
 
-    });
+            showPage(
+              this.dataset.page
+            );
+
+          }
+        );
+
+      }
+    );
+
+  /*
+     On force la liste des jeux
+     si une ancienne version
+     l'avait supprimée.
+  */
+
+  if(
+    !Array.isArray(games) ||
+    games.length === 0
+  ){
+
+    games =
+      defaultGames.slice();
+
+    localStorage.setItem(
+      "games",
+      JSON.stringify(games)
+    );
+
+  }
 
   render();
 
 }
 
+/* =========================================================
+   LANCEMENT
+========================================================= */
+
 if(
-  document.readyState !== "loading"
+  document.readyState ===
+  "loading"
 ){
-
-  initGameWin();
-
-}else{
 
   document.addEventListener(
     "DOMContentLoaded",
     initGameWin
   );
+
+}else{
+
+  initGameWin();
 
 }
 
