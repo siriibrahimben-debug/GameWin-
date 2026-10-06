@@ -1625,59 +1625,51 @@ let ludoState = null;
    LUDO — CRÉATION
 ========================================================= */
 
-function createLudoState(){
 
-  return {
-
-    started:false,
-
-    players:[
-      {
-        color:"red",
-        name:"Toi",
-        human:true
-      },
-      {
-        color:"green",
-        name:"CPU Vert",
-        human:false
-      },
-      {
-        color:"yellow",
-        name:"CPU Jaune",
-        human:false
-      },
-      {
-        color:"blue",
-        name:"CPU Bleu",
-        human:false
-      }
-    ],
-
-    turn:0,
-
-    dice:0,
-
-    tokens:{
-
-      red:[-1,-1,-1,-1],
-      green:[-1,-1,-1,-1],
-      yellow:[-1,-1,-1,-1],
-      blue:[-1,-1,-1,-1]
-
-    },
-
-    message:
-      "Lance le dé pour commencer."
-
-  };
-
-}
 
 /* =========================================================
    LUDO — DÉMARRAGE
 ========================================================= */
+function ludoChooseMode(count){
 
+  const colors = ["red","green","yellow","blue"];
+  const names = ["Toi","Joueur 2","Joueur 3","Joueur 4"];
+
+  ludoState.started = true;
+  ludoState.playerCount = count;
+  ludoState.players = [];
+
+  for(let i = 0; i < count; i++){
+
+    ludoState.players.push({
+      color: colors[i],
+      name: names[i],
+      human: true
+    });
+
+  }
+
+  if(count === 1){
+
+    ludoState.players.push({
+      color:"green",
+      name:"CPU Vert",
+      human:false
+    });
+
+  }
+
+  ludoState.turn = 0;
+  ludoState.dice = 0;
+
+  ludoState.message =
+    count === 1
+    ? "À toi ! Lance le dé."
+    : "Joueur 1, lance le dé.";
+
+  renderLudo();
+
+}
 function startLudo(){
 
   installLudoStyle();
