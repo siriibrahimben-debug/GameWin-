@@ -658,5 +658,9 @@ function chEnd(msg, pts) {
 }
 
 /* ---------- Démarrage ---------- */
+// boutons du menu (Accueil, Jeux, Classement, Récompenses, Admin)
+document.querySelectorAll("nav button[data-page]").forEach(b => {
+  b.addEventListener("click", () => showPage(b.getAttribute("data-page")));
+});
 render();
 /* ============ FIN BLOC 5 ============ */
