@@ -1708,7 +1708,68 @@ function renderLudo(){
       createLudoState();
 
   }
+if(!ludoState.started){
 
+  section.innerHTML = `
+    <div class="gw-ludo">
+      <div class="gw-ludo-panel" style="text-align:center">
+
+        <div class="gw-ludo-title">
+          🎲 LUDO CLASSIC
+        </div>
+
+        <h2>Choisis le nombre de joueurs</h2>
+
+        <p class="muted">
+          👤 1 joueur + 🤖 ordinateur<br>
+          👥 2, 3 ou 4 joueurs
+        </p>
+
+        <div class="gw-ludo-actions">
+
+          <button
+            class="primary"
+            onclick="ludoChooseMode(1)"
+          >
+            👤 1 + 🤖 Ordinateur
+          </button>
+
+          <button
+            class="primary"
+            onclick="ludoChooseMode(2)"
+          >
+            👥 2 joueurs
+          </button>
+
+          <button
+            class="primary"
+            onclick="ludoChooseMode(3)"
+          >
+            👥 3 joueurs
+          </button>
+
+          <button
+            class="primary"
+            onclick="ludoChooseMode(4)"
+          >
+            👥 4 joueurs
+          </button>
+
+          <button
+            class="primary"
+            onclick="showPage('games')"
+          >
+            ← Jeux
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+  `;
+
+  return;
+     }
   section.innerHTML = `
 
     <div class="gw-ludo">
